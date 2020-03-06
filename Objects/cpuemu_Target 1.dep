@@ -1,0 +1,58 @@
+Dependencies for Project 'cpuemu', Target 'Target 1': (DO NOT MODIFY !)
+F (.\main.c)(0x5E60155D)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (..\firmware\stm32f10x.h)(0x582570AC)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
+I (..\firmware\core_cm3.h)(0x5D25C8F6)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+I (..\firmware\cmsis_version.h)(0x5D25C8F6)
+I (..\firmware\cmsis_compiler.h)(0x5D25C8F6)
+I (..\firmware\cmsis_armcc.h)(0x5D25C8F6)
+I (..\firmware\system_stm32f10x.h)(0x5DC526A0)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdio.h)(0x588BBB84)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdlib.h)(0x588BBB84)
+I (R:\STM\uVision 5\ARM\ARMCC\include\string.h)(0x588BBB84)
+I (R:\STM\uVision 5\ARM\ARMCC\include\ctype.h)(0x588BBB84)
+I (..\firmware\gpio_stm32f1.h)(0x5E600EEA)
+I (..\firmware\driver_flash.h)(0x5D2F6028)
+I (..\firmware\init_stm32f103.h)(0x5D3FFD46)
+F (.\driver_flash.c)(0x5E5E88FD)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\driver_flash.o --omf_browse .\objects\driver_flash.crf --depend .\objects\driver_flash.d)
+I (..\firmware\stm32f10x.h)(0x582570AC)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
+I (..\firmware\core_cm3.h)(0x5D25C8F6)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+I (..\firmware\cmsis_version.h)(0x5D25C8F6)
+I (..\firmware\cmsis_compiler.h)(0x5D25C8F6)
+I (..\firmware\cmsis_armcc.h)(0x5D25C8F6)
+I (..\firmware\system_stm32f10x.h)(0x5DC526A0)
+F (.\init_stm32f103.c)(0x5E419908)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\init_stm32f103.o --omf_browse .\objects\init_stm32f103.crf --depend .\objects\init_stm32f103.d)
+I (..\firmware\stm32f10x.h)(0x582570AC)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
+I (..\firmware\core_cm3.h)(0x5D25C8F6)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+I (..\firmware\cmsis_version.h)(0x5D25C8F6)
+I (..\firmware\cmsis_compiler.h)(0x5D25C8F6)
+I (..\firmware\cmsis_armcc.h)(0x5D25C8F6)
+I (..\firmware\system_stm32f10x.h)(0x5DC526A0)
+F (.\core_cm3.c)(0x5E5CBE25)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\core_cm3.o --omf_browse .\objects\core_cm3.crf --depend .\objects\core_cm3.d)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+F (.\gpio_stm32f1.c)(0x5E600F23)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\gpio_stm32f1.o --omf_browse .\objects\gpio_stm32f1.crf --depend .\objects\gpio_stm32f1.d)
+I (..\firmware\gpio_stm32f1.h)(0x5E600EEA)
+I (..\firmware\stm32f10x.h)(0x582570AC)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
+I (..\firmware\core_cm3.h)(0x5D25C8F6)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+I (..\firmware\cmsis_version.h)(0x5D25C8F6)
+I (..\firmware\cmsis_compiler.h)(0x5D25C8F6)
+I (..\firmware\cmsis_armcc.h)(0x5D25C8F6)
+I (..\firmware\system_stm32f10x.h)(0x5DC526A0)
+F (RTE\Device\STM32F103VE\RTE_Device.h)(0x592817E6)()
+F (RTE\Device\STM32F103VE\startup_stm32f10x_hd.s)(0x582570AC)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"--pd "__UVISION_VERSION SETA 524" --pd "_RTE_ SETA 1" --pd "STM32F10X_HD SETA 1"--list .\listings\startup_stm32f10x_hd.lst --xref -o .\objects\startup_stm32f10x_hd.o --depend .\objects\startup_stm32f10x_hd.d)
+F (RTE\Device\STM32F103VE\system_stm32f10x.c)(0x5E5F59D1)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\system_stm32f10x.o --omf_browse .\objects\system_stm32f10x.crf --depend .\objects\system_stm32f10x.d)
+I (..\firmware\stm32f10x.h)(0x582570AC)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
+I (..\firmware\core_cm3.h)(0x5D25C8F6)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
+I (..\firmware\cmsis_version.h)(0x5D25C8F6)
+I (..\firmware\cmsis_compiler.h)(0x5D25C8F6)
+I (..\firmware\cmsis_armcc.h)(0x5D25C8F6)
+I (..\firmware\system_stm32f10x.h)(0x5DC526A0)

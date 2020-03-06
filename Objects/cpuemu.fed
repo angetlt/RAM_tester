@@ -1,0 +1,42 @@
+;#<FEEDBACK># ARM Linker, 5060528: Last Updated: Wed Mar 04 13:10:18 2020
+;VERSION 0.2
+;FILE core_cm3.o
+__REV16 <= USED 0
+__REVSH <= USED 0
+__get_MSP <= USED 0
+__get_PSP <= USED 0
+__set_MSP <= USED 0
+__set_PSP <= USED 0
+;FILE driver_flash.o
+__asm___14_driver_flash_c_bcca955d____REV16 <= USED 0
+__asm___14_driver_flash_c_bcca955d____REVSH <= USED 0
+__asm___14_driver_flash_c_bcca955d____RRX <= USED 0
+flash_erase_all_pages <= USED 0
+flash_erase_page <= USED 0
+flash_lock <= USED 0
+flash_unlock <= USED 0
+flash_write <= USED 0
+;FILE gpio_stm32f1.o
+__asm___14_gpio_stm32f1_c_IOs____REV16 <= USED 0
+__asm___14_gpio_stm32f1_c_IOs____REVSH <= USED 0
+__asm___14_gpio_stm32f1_c_IOs____RRX <= USED 0
+;FILE init_stm32f103.o
+TIM1_init_OSC <= USED 0
+TIM2_init_OSC <= USED 0
+TIM3_Init_CH3OSC_PWM <= USED 0
+__asm___16_init_stm32f103_c_a275afbf____REV16 <= USED 0
+__asm___16_init_stm32f103_c_a275afbf____REVSH <= USED 0
+__asm___16_init_stm32f103_c_a275afbf____RRX <= USED 0
+;FILE main.o
+DeviceConfigurationInit <= USED 0
+SaveCommand <= USED 0
+SignalInit <= USED 0
+__asm___6_main_c_1b9b85c7____REV16 <= USED 0
+__asm___6_main_c_1b9b85c7____REVSH <= USED 0
+__asm___6_main_c_1b9b85c7____RRX <= USED 0
+;FILE startup_stm32f10x_hd.o
+;FILE system_stm32f10x.o
+SystemCoreClockUpdate <= USED 0
+__asm___18_system_stm32f10x_c_5d646a67____REV16 <= USED 0
+__asm___18_system_stm32f10x_c_5d646a67____REVSH <= USED 0
+__asm___18_system_stm32f10x_c_5d646a67____RRX <= USED 0
