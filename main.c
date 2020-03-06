@@ -273,6 +273,7 @@ uint32_t addressCheck(char *str, uint32_t length)
 {
 	//TODO:
 	//1. Проверка на четность (16-бит), если DeviceConfiguration.ModeX = 0x1
+	
 	//2. Проверка на диапазон - от 0x0 до 0xFFFFFF‬ (24 бит)
 	uint32_t err_count = 0;
 	for (uint32_t i = 0; i < length; i++)
