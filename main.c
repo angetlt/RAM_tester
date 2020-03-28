@@ -8,8 +8,9 @@
 /*TODO:
 -в функции USARTInit() реализовать настройку скорости из FLASH памяти
 - если выбран 16-битный режим, то ввести проверку четности адреса
-- реализовать контроль размера данных и адреса
 - реализовать ответ типа "ЭХО-ОК"
+- не работает проверка данных в диапазоне допустимого dataCheck()
+- реализовать проверку и создание CurrentCommand в отдельной функции. Так проще будет парсить команду
 *	
 Используемый микроконтроллер STM32F103VE (high-density)
 тестовая память toshiba g80477 tc551664 bji-15
@@ -268,40 +269,53 @@ uint32_t hexCheck(char *str, uint32_t length)
 	return err_count;
 }
 
-/*
-uint32_t addressCheck(char *str, uint32_t length)
+uint32_t addressCheck(uint32_t iAddress)
 {
-	//TODO:
-	//1. Проверка на четность (16-бит), если DeviceConfiguration.ModeX = 0x1
-	
-	//2. Проверка на диапазон - от 0x0 до 0xFFFFFF‬ (24 бит)
+	//Проверка на диапазон - от 0h000000 до 0hFFFFFF‬ (24 бит)
 	uint32_t err_count = 0;
-	for (uint32_t i = 0; i < length; i++)
+	if (iAddress <= 0xFFFFFF)
 	{
-		if (isxdigit(str[i]) == 0)
-		{
-			err_count++;
-		}
+		err_count = 0;
+	}
+	else
+	{
+		err_count++;
 	}
 	return err_count;
 }
 
-uint32_t dataCheck(char *str, uint32_t length)
+uint32_t dataCheck(uint32_t iData)
 {
-	//TODO: Проверка на диапазон
+	//Проверка на диапазон
 	//от 0x0 до 0xFF‬ (8 бит) DeviceConfiguration.ModeX = 0x0
 	//от 0x0 до 0xFFFF (16 бит) DeviceConfiguration.ModeX = 0x1
 	uint32_t err_count = 0;
-	for (uint32_t i = 0; i < length; i++)
+
+	if (DeviceConfiguration.ModeX == 0)
 	{
-		if (isxdigit(str[i]) == 0)
+		if (iData <= 0xFF)
+		{
+			err_count = 0;
+		}
+		else
 		{
 			err_count++;
 		}
 	}
+	else
+	{
+		if (iData <= 0xFFFF)
+		{
+			err_count = 0;
+		}
+		else
+		{
+			err_count++;
+		}
+	}
+
 	return err_count;
 }
-*/
 
 void SaveCommand(void)
 {
@@ -330,7 +344,14 @@ void ParseUARTMessage(void)
 			CurrentCommand.Command = WRITE;
 			CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
 			CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
-			WriteCommand();
+			if (addressCheck(CurrentCommand.Address) == 0)
+			{
+				WriteCommand();
+			}
+			else
+			{
+				SendMessage("Address out of range");
+			}
 		}
 		else
 		{
@@ -348,13 +369,20 @@ void ParseUARTMessage(void)
 			CurrentCommand.Command = READ;
 			CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
 			CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
+			if (addressCheck(CurrentCommand.Address) == 0)
+			{
+				WriteCommand();
+			}
+			else
+			{
+				SendMessage("Address out of range");
+			}
 		}
 		else
 		{
 			SendMessage("BAD Data or Address");
 		}
 	}
-
 	else if ((strncmp(UART_Message.Command, "LOOP", 4) == 0))
 	{
 		//RepeatCommand();

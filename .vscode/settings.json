@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "gpio_stm32f1.h": "c",
-        "stm32f10x.h": "c",
-        "driver_flash.h": "c"
-    }
-}

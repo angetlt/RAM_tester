@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\firmware;..\firmware;..\firmware</IncludePath>
+              <IncludePath>..\firmware;..\firmware;..\firmware;..\RAM_tester</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
