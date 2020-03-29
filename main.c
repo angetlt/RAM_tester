@@ -9,8 +9,6 @@
 -в функции USARTInit() реализовать настройку скорости из FLASH памяти
 - если выбран 16-битный режим, то ввести проверку четности адреса
 - реализовать ответ типа "ЭХО-ОК"
-- не работает проверка данных в диапазоне допустимого dataCheck()
-- реализовать проверку и создание CurrentCommand в отдельной функции. Так проще будет парсить команду
 *	
 Используемый микроконтроллер STM32F103VE (high-density)
 тестовая память toshiba g80477 tc551664 bji-15
@@ -317,6 +315,61 @@ uint32_t dataCheck(uint32_t iData)
 	return err_count;
 }
 
+uint32_t Check(void)
+{
+	uint32_t adr_len = strlen(UART_Message.Address);
+	uint32_t data_len = strlen(UART_Message.Data);
+	uint32_t check_err_count = 0;
+	if ((hexCheck(UART_Message.Address, adr_len) == 0) &
+		(hexCheck(UART_Message.Data, data_len) == 0))
+	{
+		CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
+		CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
+		if (addressCheck(CurrentCommand.Address) == 0)
+		{
+			if (dataCheck(CurrentCommand.Data) == 0)
+			{
+				check_err_count = 0;
+			}
+			else
+			{
+				check_err_count = 8;
+			}
+		}
+		else
+		{
+			check_err_count = 16;
+		}
+	}
+	else
+	{
+		check_err_count = 32;
+	}
+
+	return check_err_count;
+}
+
+void errorType(uint32_t err_number)
+{
+	switch (err_number)
+	{
+	case 0:
+		SendMessage("No errors");
+		break;
+	case 8:
+		SendMessage("Data out of range");
+		break;
+	case 16:
+		SendMessage("Address out of range");
+		break;
+	case 32:
+		SendMessage("Data or address have no hex format");
+		break;
+	default:
+		printf("Unknow type error");
+	}
+}
+
 void SaveCommand(void)
 {
 	flash_unlock();
@@ -330,57 +383,37 @@ void SaveCommand(void)
 void ParseUARTMessage(void)
 {
 	uint32_t cmd_len = strlen(UART_Message.Command);
-	uint32_t adr_len = strlen(UART_Message.Address);
-	uint32_t data_len = strlen(UART_Message.Data);
+
+	uint32_t err_code = 0;
 
 	if ((strncmp(UART_Message.Command, "WR", cmd_len) == 0) |
 		(strncmp(UART_Message.Command, "WRM", cmd_len) == 0) |
 		(strncmp(UART_Message.Command, "WRP", cmd_len) == 0))
 	{
-
-		if ((hexCheck(UART_Message.Address, adr_len) == 0) &
-			(hexCheck(UART_Message.Data, data_len) == 0))
+		err_code = Check();
+		if (err_code == 0)
 		{
 			CurrentCommand.Command = WRITE;
-			CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
-			CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
-			if (addressCheck(CurrentCommand.Address) == 0)
-			{
-				WriteCommand();
-			}
-			else
-			{
-				SendMessage("Address out of range");
-			}
+			WriteCommand();
 		}
 		else
 		{
-			SendMessage("BAD Data or Address");
+			errorType(err_code);
 		}
 	}
 	else if ((strncmp(UART_Message.Command, "RD", cmd_len) == 0) |
 			 (strncmp(UART_Message.Command, "RDM", cmd_len) == 0) |
 			 (strncmp(UART_Message.Command, "RDP", cmd_len) == 0))
-
 	{
-		if ((hexCheck(UART_Message.Address, adr_len) == 0) &
-			(hexCheck(UART_Message.Data, data_len) == 0))
+		err_code = Check();
+		if (err_code == 0)
 		{
 			CurrentCommand.Command = READ;
-			CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
-			CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
-			if (addressCheck(CurrentCommand.Address) == 0)
-			{
-				WriteCommand();
-			}
-			else
-			{
-				SendMessage("Address out of range");
-			}
+			ReadCommand();
 		}
 		else
 		{
-			SendMessage("BAD Data or Address");
+			errorType(err_code);
 		}
 	}
 	else if ((strncmp(UART_Message.Command, "LOOP", 4) == 0))
