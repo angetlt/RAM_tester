@@ -9,6 +9,7 @@
 -в функции USARTInit() реализовать настройку скорости из FLASH памяти
 - если выбран 16-битный режим, то ввести проверку четности адреса
 - реализовать ответ типа "ЭХО-ОК"
+- чтение конфигурации не работает
 *	
 Используемый микроконтроллер STM32F103VE (high-density)
 тестовая память toshiba g80477 tc551664 bji-15
@@ -51,6 +52,7 @@
 /*FLASH MACROS*/
 #define FLASH_CONFIG_START_ADDRESS ((uint32_t)0x0800F000)
 #define FLASH_KEY_WORD ((uint32_t)0x248F135B)
+#define FLASH_BYTE_STEP 0x4
 #define FLASH_STEP 0x0F0 //4 bytes
 #define FLASH_PAGE 0x080 //128 pages
 
@@ -90,10 +92,10 @@ typedef struct
 //Тип хранения конфигурации внутрисхемного эмулятора
 typedef struct
 {
-	uint8_t AlignMode; ///AlignMode - Синхронизация по адресу или по данным
-	uint8_t ModeX;
+	uint32_t AlignMode; ///AlignMode - Синхронизация по адресу или по данным
+	uint32_t ModeX;
 	/**OSC - частота тактирования процессорной шины */
-	uint16_t OSC;
+	uint32_t OSC;
 	uint32_t USART_BRR;
 } Config;
 
@@ -174,12 +176,24 @@ void SendMessage(char *str)
 
 void DefaultCommand(void)
 {
+	DeviceConfiguration.AlignMode = 0x01;
+	DeviceConfiguration.ModeX = 0x01;
+
+	SendMessage("Data 16 bit");
+	SendMessage("SYNC on address");
 	SendMessage("Configuration loaded from default");
 }
 
 void HelpCommand(void)
 {
 	SendMessage("help - this help");
+	SendMessage("<---------------HELP--------------->");
+	SendMessage("WR, WRM, WRP - write command");
+	SendMessage("RD, RDM, RDP - read command");
+	SendMessage(" ");
+	SendMessage("format command@address=data");
+	SendMessage("SAVE - commamt that save current device configuration");
+	SendMessage("<-------------END-HELP------------->");
 }
 
 void WriteCommand(void)
@@ -269,7 +283,7 @@ uint32_t hexCheck(char *str, uint32_t length)
 
 uint32_t addressCheck(uint32_t iAddress)
 {
-	//Проверка на диапазон - от 0h000000 до 0hFFFFFF‬ (24 бит)
+	//Проверка на диапазон - от 0x000000 до 0xFFFFFF‬ (24 бит)
 	uint32_t err_count = 0;
 	if (iAddress <= 0xFFFFFF)
 	{
@@ -285,8 +299,8 @@ uint32_t addressCheck(uint32_t iAddress)
 uint32_t dataCheck(uint32_t iData)
 {
 	//Проверка на диапазон
-	//от 0x0 до 0xFF‬ (8 бит) DeviceConfiguration.ModeX = 0x0
-	//от 0x0 до 0xFFFF (16 бит) DeviceConfiguration.ModeX = 0x1
+	//до 0xFF‬ (8 бит) DeviceConfiguration.ModeX = 0x0
+	//до 0xFFFF (16 бит) DeviceConfiguration.ModeX = 0x1
 	uint32_t err_count = 0;
 
 	if (DeviceConfiguration.ModeX == 0)
@@ -372,12 +386,67 @@ void errorType(uint32_t err_number)
 
 void SaveCommand(void)
 {
+	uint32_t flash_wr_count = 0;
+	flash_wr_count = FlashControl.write_count;
+	flash_wr_count++;
+
 	flash_unlock();
 	flash_erase_page(FLASH_CONFIG_START_ADDRESS);
-	flash_write(FLASH_CONFIG_START_ADDRESS, DeviceConfiguration.ModeX);
-	flash_write(FLASH_CONFIG_START_ADDRESS + 0x4, DeviceConfiguration.AlignMode);
+
+	flash_write(FLASH_CONFIG_START_ADDRESS, FLASH_KEY_WORD);									  //Запись ключевого слова
+	flash_write(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP, flash_wr_count);					  //Запись количества сохранений конфигурации
+	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, DeviceConfiguration.AlignMode); //Запись режима передачи
+	flash_write(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP, DeviceConfiguration.ModeX);	 //Запись режима выравнивания
+
 	flash_lock();
 	SendMessage("Current configuration saved");
+}
+
+void DeviceConfigurationInit(void)
+{
+	char rMessage1[UART_RECIEVE_BUFFER];
+	char rMessage2[UART_RECIEVE_BUFFER];
+	SendMessage("Preparing device configuration...");
+	FlashControl.hash = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS;
+	FlashControl.write_count = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP;
+
+	if ((FlashControl.write_count != 0xFFFFFFFF) && (FlashControl.hash == FLASH_KEY_WORD))
+	{
+		DeviceConfiguration.AlignMode = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP;
+		DeviceConfiguration.ModeX = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP;
+
+		snprintf(rMessage1, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.AlignMode);
+		snprintf(rMessage2, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.ModeX);
+
+		SendMessage(rMessage1);
+		SendMessage(rMessage2);
+		/*
+		if (DeviceConfiguration.AlignMode == 0x0)
+		{
+			SendMessage("Sync on address");
+		}
+		else
+		{
+			SendMessage("Sync on Data");
+		}
+
+		if (DeviceConfiguration.ModeX == 0x0)
+		{
+			SendMessage("8-bit mode");
+		}
+		else
+		{
+			SendMessage("16-bit mode");
+		}
+		SendMessage("Configuration loaded from FLASH");
+	}
+
+		else
+		{
+			DefaultCommand();
+		}
+		*/
+	}
 }
 
 void ParseUARTMessage(void)
@@ -490,7 +559,6 @@ void RecieveMessage(char data)
 	}
 	else
 	{
-		//TODO: выключаем прием
 		SendMessage("Too long command");
 		rec_len = 0;
 	}
@@ -523,22 +591,6 @@ void TIM1_UP_IRQHandler(void)
 	}
 }
 
-void DeviceConfigurationInit(void)
-{
-	SendMessage("Preparing device configuration...");
-	FlashControl.hash = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS;
-	if (FlashControl.hash == FLASH_KEY_WORD)
-	{
-		DeviceConfiguration.AlignMode = *(__IO uint8_t *)FLASH_CONFIG_START_ADDRESS + 0x0F;
-		DeviceConfiguration.ModeX = *(__IO uint8_t *)FLASH_CONFIG_START_ADDRESS + 0x10;
-		SendMessage("Configuration loaded from FLASH");
-	}
-	else
-	{
-		DefaultCommand();
-	}
-}
-
 /*MAIN*/
 int main(int argc, char *argv[])
 {
@@ -546,6 +598,7 @@ int main(int argc, char *argv[])
 	USARTInit();
 	IRQHandlerInit();
 	TIM1_Init_ms_timer();
+	DeviceConfigurationInit();
 	SendMessage("Ready");
 	while (1)
 	{
