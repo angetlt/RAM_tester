@@ -9,7 +9,6 @@
 -в функции USARTInit() реализовать настройку скорости из FLASH памяти
 - если выбран 16-битный режим, то ввести проверку четности адреса
 - реализовать ответ типа "ЭХО-ОК"
-- чтение конфигурации не работает
 *	
 Используемый микроконтроллер STM32F103VE (high-density)
 тестовая память toshiba g80477 tc551664 bji-15
@@ -404,30 +403,24 @@ void SaveCommand(void)
 
 void DeviceConfigurationInit(void)
 {
-	char rMessage1[UART_RECIEVE_BUFFER];
-	char rMessage2[UART_RECIEVE_BUFFER];
+
 	SendMessage("Preparing device configuration...");
 	FlashControl.hash = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS;
-	FlashControl.write_count = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP;
+	FlashControl.write_count = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP);
 
 	if ((FlashControl.write_count != 0xFFFFFFFF) && (FlashControl.hash == FLASH_KEY_WORD))
 	{
-		DeviceConfiguration.AlignMode = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP;
-		DeviceConfiguration.ModeX = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP;
+		DeviceConfiguration.AlignMode = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP);
+		DeviceConfiguration.ModeX = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP);
 
-		snprintf(rMessage1, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.AlignMode);
-		snprintf(rMessage2, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.ModeX);
-
-		SendMessage(rMessage1);
-		SendMessage(rMessage2);
-		/*
 		if (DeviceConfiguration.AlignMode == 0x0)
 		{
-			SendMessage("Sync on address");
+			SendMessage("Sync on Data");
 		}
 		else
 		{
-			SendMessage("Sync on Data");
+
+			SendMessage("Sync on address");
 		}
 
 		if (DeviceConfiguration.ModeX == 0x0)
@@ -441,11 +434,9 @@ void DeviceConfigurationInit(void)
 		SendMessage("Configuration loaded from FLASH");
 	}
 
-		else
-		{
-			DefaultCommand();
-		}
-		*/
+	else
+	{
+		DefaultCommand();
 	}
 }
 

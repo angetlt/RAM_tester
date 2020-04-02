@@ -22,6 +22,23 @@
 #define RD_RESET GPIOC->BSRR = GPIO_BSRR_BR3
 #define MRQ_RESET GPIOC->BSRR = GPIO_BSRR_BR8
 #define DTR_RESET GPIOC->BSRR = GPIO_BSRR_BR9
+
+void debugUARTMessage(void)
+{
+    char rMessage1[UART_RECIEVE_BUFFER];
+    char rMessage2[UART_RECIEVE_BUFFER];
+    char rMessage3[UART_RECIEVE_BUFFER];
+
+    //функция переводит число в строку
+    snprintf(rMessage1, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.AlignMode);
+    snprintf(rMessage2, UART_RECIEVE_BUFFER, "%X", DeviceConfiguration.ModeX);
+    snprintf(rMessage3, UART_RECIEVE_BUFFER, "%X", FlashControl.write_count);
+
+    SendMessage(rMessage1);
+    SendMessage(rMessage2);
+    SendMessage(rMessage3);
+}
+
 void DeviceOSC_start(void)
 {
     TIM3->CR1 |= TIM_CR1_CEN;
