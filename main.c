@@ -1,40 +1,39 @@
 /**
  * \mainpage
- * \author Атапин А.В. tlt-andrew@yandex.ru
+ * \author Атапин А.В. tlt-andrew@yandex.ru *
  * \date
- *   
- */
+ *    
+*/
 
-/*TODO:
--в функции USARTInit() реализовать настройку скорости из FLASH памяти
-- если выбран 16-битный режим, то ввести проверку четности адреса
-- реализовать ответ типа "ЭХО-ОК"
-*	
-Используемый микроконтроллер STM32F103VE (high-density)
-тестовая память toshiba g80477 tc551664 bji-15
-*
-*	PA00-PA07 - OUT - ADDR_H A16-A23
-*	PA08 - OUT - ALE
-*	PA09 - UART_TX
-*	PA10 - UART_RX
-*	PA11 - OUT - LDS
-*	PA12 - OUT - UDS
-*
-*	PC00 - OUT - BHE
-*	PC01 - OUT - AS
-*	PC02 - OUT - WR
-*	PC03 - OUT - RD
-*	PC08 - OUT - MRQ
-*	PC09 - OUT - DT/R
-*
-*	PD00-PD15 - OUT - ADDR_L A00-A15
-*	PE00-PE15 - INOUT - DATA_16b D00-D15
-*
-*	PC06 - IN - SYNC
-*	PC07 - IN - RDY
-*
-*	PB0 - in - TIM3_CH3 (alternate function)
-*	Вход тактирования
+/**
+ * TODO:
+ *- Реализовать счетчик, работающий от внешнего генератора.
+ *- Реализовать ответ типа "ЭХО-ОК"
+ * Используемый микроконтроллер STM32F103VE (high-density)
+ * тестовая память toshiba g80477 tc551664 bji-15
+ *
+ *	PA00-PA07 - OUT - ADDR_H A16-A23
+ *	PA08 - OUT - ALE
+ *	PA09 - UART_TX
+ *	PA10 - UART_RX
+ *	PA11 - OUT - LDS
+ *	PA12 - OUT - UDS
+ *
+ *	PC00 - OUT - BHE
+ *	PC01 - OUT - AS
+ *	PC02 - OUT - WR
+ *	PC03 - OUT - RD
+ *	PC08 - OUT - MRQ
+ *	PC09 - OUT - DT/R
+ *
+ *	PD00-PD15 - OUT - ADDR_L A00-A15
+ *	PE00-PE15 - INOUT - DATA_16b D00-D15
+ *
+ *	PC06 - IN - SYNC
+ *	PC07 - IN - RDY
+ *
+ *	PB0 - in - TIM3_CH3 (alternate function)
+ *	Вход тактирования
 */
 
 #include <stm32f10x.h>
@@ -93,9 +92,6 @@ typedef struct
 {
 	uint32_t AlignMode; ///AlignMode - Синхронизация по адресу или по данным
 	uint32_t ModeX;
-	/**OSC - частота тактирования процессорной шины */
-	uint32_t OSC;
-	uint32_t USART_BRR;
 } Config;
 
 typedef struct
@@ -185,13 +181,12 @@ void DefaultCommand(void)
 
 void HelpCommand(void)
 {
-	SendMessage("help - this help");
 	SendMessage("<---------------HELP--------------->");
 	SendMessage("WR, WRM, WRP - write command");
 	SendMessage("RD, RDM, RDP - read command");
 	SendMessage(" ");
 	SendMessage("format command@address=data");
-	SendMessage("SAVE - commamt that save current device configuration");
+	SendMessage("SAVE - command that save current device configuration");
 	SendMessage("<-------------END-HELP------------->");
 }
 
@@ -205,7 +200,7 @@ void WriteCommand(void)
 	IO_SetLine(o_UDS, HIGH);
 	DataBusWrite();
 	GPIOD->ODR = CurrentCommand.Address; //адрес
-	GPIOE->ODR = CurrentCommand.Data;	//данные
+	GPIOE->ODR = CurrentCommand.Data;	 //данные
 
 	//Цикл записи (T2, T3, T4)
 	IO_SetLine(o_Address_A16, LOW); //CE = LOW
@@ -280,9 +275,32 @@ uint32_t hexCheck(char *str, uint32_t length)
 	return err_count;
 }
 
+uint32_t addressParityCheck(uint32_t iAddress)
+{
+	//Если 16 бит режим, то дополнительно проверка адреса на четность
+	uint32_t err_count = 0;
+	if (DeviceConfiguration.ModeX == 0)
+	{
+		err_count = 0;
+	}
+	else
+	{
+		if (iAddress % 2 == 0)
+		{
+			err_count = 0;
+		}
+		else
+		{
+			err_count++;
+		}
+	}
+	return err_count;
+}
+
 uint32_t addressCheck(uint32_t iAddress)
 {
-	//Проверка на диапазон - от 0x000000 до 0xFFFFFF‬ (24 бит)
+	//Проверка на диапазон - до 0xFFFFFF‬ (24 бит)
+
 	uint32_t err_count = 0;
 	if (iAddress <= 0xFFFFFF)
 	{
@@ -301,7 +319,6 @@ uint32_t dataCheck(uint32_t iData)
 	//до 0xFF‬ (8 бит) DeviceConfiguration.ModeX = 0x0
 	//до 0xFFFF (16 бит) DeviceConfiguration.ModeX = 0x1
 	uint32_t err_count = 0;
-
 	if (DeviceConfiguration.ModeX == 0)
 	{
 		if (iData <= 0xFF)
@@ -342,21 +359,28 @@ uint32_t Check(void)
 		{
 			if (dataCheck(CurrentCommand.Data) == 0)
 			{
-				check_err_count = 0;
+				if (addressParityCheck(CurrentCommand.Address) == 0)
+				{
+					check_err_count = 0;
+				}
+				else
+				{
+					check_err_count = 3;
+				}
 			}
 			else
 			{
-				check_err_count = 8;
+				check_err_count = 1;
 			}
 		}
 		else
 		{
-			check_err_count = 16;
+			check_err_count = 2;
 		}
 	}
 	else
 	{
-		check_err_count = 32;
+		check_err_count = 4;
 	}
 
 	return check_err_count;
@@ -369,14 +393,23 @@ void errorType(uint32_t err_number)
 	case 0:
 		SendMessage("No errors");
 		break;
-	case 8:
+	case 1:
 		SendMessage("Data out of range");
 		break;
-	case 16:
+	case 2:
 		SendMessage("Address out of range");
 		break;
-	case 32:
-		SendMessage("Data or address have no hex format");
+	case 3:
+		SendMessage("Address is not even number");
+		break;
+	case 4:
+		SendMessage("ADDRESS or DATA have no hex format");
+		break;
+	case 5:
+		SendMessage("test");
+		break;
+	case 6:
+		SendMessage("test");
 		break;
 	default:
 		printf("Unknow type error");
@@ -395,7 +428,7 @@ void SaveCommand(void)
 	flash_write(FLASH_CONFIG_START_ADDRESS, FLASH_KEY_WORD);									  //Запись ключевого слова
 	flash_write(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP, flash_wr_count);					  //Запись количества сохранений конфигурации
 	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, DeviceConfiguration.AlignMode); //Запись режима передачи
-	flash_write(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP, DeviceConfiguration.ModeX);	 //Запись режима выравнивания
+	flash_write(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP, DeviceConfiguration.ModeX);	  //Запись режима выравнивания
 
 	flash_lock();
 	SendMessage("Current configuration saved");
@@ -419,7 +452,6 @@ void DeviceConfigurationInit(void)
 		}
 		else
 		{
-
 			SendMessage("Sync on address");
 		}
 
