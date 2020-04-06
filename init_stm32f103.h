@@ -1,11 +1,28 @@
-/*=============TIMERS_INIT_SECTION==============*/
-void TIM1_Init_ms_timer(void);
-void TIM1_init_OSC(void);
-void TIM2_init_OSC(void);
-void TIM3_Init_CH3OSC_PWM(void);
+/**
+ * Функции инициализации периферийных устройств микроконтроллера STM32F103VE
+ * Функции аппаратнозависимые
+*/
 
-void PortClock(void);
+/**
+ * Функция инициализации USART1 микроконтроллера
+ * Для использования вызвать функцию initUSART1_19200();
+*/
+void initUSART1_19200(void);
 
-void USARTInit(void);
+/**
+ * Функция инициализации прерваний микроконтроллера
+ * Для использования вызвать функцию initIRQHandler();
+*/
+void initIRQHandler(void);
 
-void IRQHandlerInit(void);
+/**
+ * Функция инициализации прерваний микроконтроллера
+ * Для использования вызвать функцию initIRQHandler();
+*/
+void initTIM1_msTimer(void);
+
+/**
+ * Функция инициализации прерваний микроконтроллера
+ * Для использования вызвать функцию initIRQHandler();
+*/
+void initTIM3CH3_externalCounter(void);

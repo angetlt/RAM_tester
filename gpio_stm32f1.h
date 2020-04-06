@@ -27,9 +27,9 @@ typedef enum
 typedef struct
 {
 	GPIO_TypeDef *GPIOx; // Имя порта
-	uint16_t GPIO_Pin;   // Номер порта
+	uint16_t GPIO_Pin;	 // Номер порта
 	uint8_t MODE;		 // Режим
-	uint8_t DefState;	// Стартовое значение
+	uint8_t DefState;	 // Стартовое значение
 } tGPIO_Line;
 
 typedef enum
@@ -93,7 +93,7 @@ typedef enum
 	o_UART_TX,
 	o_UART_RX,
 
-	I_CLK_IN
+	i_externalOSC
 
 } tIOLine;
 

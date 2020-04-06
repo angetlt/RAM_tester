@@ -1,14 +1,17 @@
 /**
  * \mainpage
- * \author Атапин А.В. tlt-andrew@yandex.ru *
+ * \author Атапин А.В. tlt-andrew@yandex.ru 
  * \date
  *    
 */
 
 /**
  * TODO:
- *- Реализовать счетчик, работающий от внешнего генератора.
- *- Реализовать ответ типа "ЭХО-ОК"
+ * - Реализовать проверку на правильность данных при чтении настроек с Flash
+ * - Переделать char на uint8_t
+ * - Реализовать счетчик, работающий от внешнего генератора TIM3 GPIOB 5 (канал 2). Не работает
+ * - Реализовать парсинг команд FDP, FDM
+ * 
  * Используемый микроконтроллер STM32F103VE (high-density)
  * тестовая память toshiba g80477 tc551664 bji-15
  *
@@ -32,90 +35,22 @@
  *	PC06 - IN - SYNC
  *	PC07 - IN - RDY
  *
- *	PB0 - in - TIM3_CH3 (alternate function)
+ *	PB5 - IN - TIM3_CH2 (alternate function)
  *	Вход тактирования
 */
 
-#include <stm32f10x.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <ctype.h>
-
-#include <gpio_stm32f1.h>
-#include <driver_flash.h>
-#include <init_stm32f103.h>
-
-/*FLASH MACROS*/
-#define FLASH_CONFIG_START_ADDRESS ((uint32_t)0x0800F000)
-#define FLASH_KEY_WORD ((uint32_t)0x248F135B)
-#define FLASH_BYTE_STEP 0x4
-#define FLASH_STEP 0x0F0 //4 bytes
-#define FLASH_PAGE 0x080 //128 pages
-
-/*UART RECIEVE BUFFER*/
-#define UART_RECIEVE_BUFFER 40
-
-/*Declarations*/
-void ReadCommand(void);
-
-typedef enum
-{
-	WRITE,
-	READ,
-	RAM,
-	ROM
-} CommandType;
-
-typedef struct
-{
-	CommandType Command;
-	uint32_t Address;
-	uint32_t Start_Address;
-	uint32_t Stop_Address;
-	uint16_t IncrementAddress;
-	uint32_t Data;
-	uint32_t Attributes;
-} Command;
-
-//Тип после
-typedef struct
-{
-	char *Command;
-	char *Address;
-	char *Data;
-} Message;
-
-//Тип хранения конфигурации внутрисхемного эмулятора
-typedef struct
-{
-	uint32_t AlignMode; ///AlignMode - Синхронизация по адресу или по данным
-	uint32_t ModeX;
-} Config;
-
-typedef struct
-{
-	uint32_t write_count;
-	uint32_t hash;
-} flash;
+#include <main.h>
 
 /*Global*/
 Message UART_Message;
-Command CurrentCommand;
-Command LastCommand;
+Command CurrentCommand = {EMPTY, BLANK, 0, 0, 0, 0, 0, 0};
+Command LastCommand = {EMPTY, BLANK, 0, 0, 0, 0, 0, 0};
 flash FlashControl;
 Config DeviceConfiguration;
 
-/*Default Messages*/
-char *MessageUnknowCommand = "UNKNOW COMMAND";
-char *MessageBadData = "BAD DATA";
-char *MessageBadAddress = "BAD ADDRESS";
-char *MessageOk = "OK";
-char *MessageDone = "DONE";
-
 /*UART buffer*/
-char received[UART_RECIEVE_BUFFER], rec_len = 0;
+char recieved[UART_RECIEVE_BUFFER];
+uint32_t rec_len = 0;
 
 /*Functions*/
 void delay_ms(uint16_t Count_ms)
@@ -172,18 +107,15 @@ void SendMessage(char *str)
 void DefaultCommand(void)
 {
 	DeviceConfiguration.AlignMode = 0x01;
-	DeviceConfiguration.ModeX = 0x01;
-
-	SendMessage("Data 16 bit");
-	SendMessage("SYNC on address");
-	SendMessage("Configuration loaded from default");
+	DeviceConfiguration.DataBusSize = 0xFFFF;
+	SendMessage("Loaded default device configuration: 16 bit, sync on address");
 }
 
 void HelpCommand(void)
 {
 	SendMessage("<---------------HELP--------------->");
-	SendMessage("WR, WRM, WRP - write command");
-	SendMessage("RD, RDM, RDP - read command");
+	SendMessage("WRM, WRP - write command");
+	SendMessage("RDM, RDP - read command");
 	SendMessage(" ");
 	SendMessage("format command@address=data");
 	SendMessage("SAVE - command that save current device configuration");
@@ -262,130 +194,6 @@ void ReadCommand(void)
 	SendMessage("<----read complete---");
 }
 
-uint32_t hexCheck(char *str, uint32_t length)
-{
-	uint32_t err_count = 0;
-	for (uint32_t i = 0; i < length; i++)
-	{
-		if (isxdigit(str[i]) == 0)
-		{
-			err_count++;
-		}
-	}
-	return err_count;
-}
-
-uint32_t addressParityCheck(uint32_t iAddress)
-{
-	//Если 16 бит режим, то дополнительно проверка адреса на четность
-	uint32_t err_count = 0;
-	if (DeviceConfiguration.ModeX == 0)
-	{
-		err_count = 0;
-	}
-	else
-	{
-		if (iAddress % 2 == 0)
-		{
-			err_count = 0;
-		}
-		else
-		{
-			err_count++;
-		}
-	}
-	return err_count;
-}
-
-uint32_t addressCheck(uint32_t iAddress)
-{
-	//Проверка на диапазон - до 0xFFFFFF‬ (24 бит)
-
-	uint32_t err_count = 0;
-	if (iAddress <= 0xFFFFFF)
-	{
-		err_count = 0;
-	}
-	else
-	{
-		err_count++;
-	}
-	return err_count;
-}
-
-uint32_t dataCheck(uint32_t iData)
-{
-	//Проверка на диапазон
-	//до 0xFF‬ (8 бит) DeviceConfiguration.ModeX = 0x0
-	//до 0xFFFF (16 бит) DeviceConfiguration.ModeX = 0x1
-	uint32_t err_count = 0;
-	if (DeviceConfiguration.ModeX == 0)
-	{
-		if (iData <= 0xFF)
-		{
-			err_count = 0;
-		}
-		else
-		{
-			err_count++;
-		}
-	}
-	else
-	{
-		if (iData <= 0xFFFF)
-		{
-			err_count = 0;
-		}
-		else
-		{
-			err_count++;
-		}
-	}
-
-	return err_count;
-}
-
-uint32_t Check(void)
-{
-	uint32_t adr_len = strlen(UART_Message.Address);
-	uint32_t data_len = strlen(UART_Message.Data);
-	uint32_t check_err_count = 0;
-	if ((hexCheck(UART_Message.Address, adr_len) == 0) &
-		(hexCheck(UART_Message.Data, data_len) == 0))
-	{
-		CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
-		CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
-		if (addressCheck(CurrentCommand.Address) == 0)
-		{
-			if (dataCheck(CurrentCommand.Data) == 0)
-			{
-				if (addressParityCheck(CurrentCommand.Address) == 0)
-				{
-					check_err_count = 0;
-				}
-				else
-				{
-					check_err_count = 3;
-				}
-			}
-			else
-			{
-				check_err_count = 1;
-			}
-		}
-		else
-		{
-			check_err_count = 2;
-		}
-	}
-	else
-	{
-		check_err_count = 4;
-	}
-
-	return check_err_count;
-}
-
 void errorType(uint32_t err_number)
 {
 	switch (err_number)
@@ -406,10 +214,22 @@ void errorType(uint32_t err_number)
 		SendMessage("ADDRESS or DATA have no hex format");
 		break;
 	case 5:
-		SendMessage("test");
+		SendMessage("Start Address more than Stop Adress");
 		break;
 	case 6:
-		SendMessage("test");
+		SendMessage("Address have no hex format");
+		break;
+	case 7:
+		SendMessage("Unable to loop last command");
+		break;
+	case 8:
+		SendMessage("Too much repeat counter (32bit)");
+		break;
+	case 9:
+		SendMessage("You tried calculate lenght from NULL pointer");
+		break;
+	case 10:
+		SendMessage("Unknow command");
 		break;
 	default:
 		printf("Unknow type error");
@@ -425,37 +245,22 @@ void SaveCommand(void)
 	flash_unlock();
 	flash_erase_page(FLASH_CONFIG_START_ADDRESS);
 
-	flash_write(FLASH_CONFIG_START_ADDRESS, FLASH_KEY_WORD);									  //Запись ключевого слова
-	flash_write(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP, flash_wr_count);					  //Запись количества сохранений конфигурации
-	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, DeviceConfiguration.AlignMode); //Запись режима передачи
-	flash_write(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP, DeviceConfiguration.ModeX);	  //Запись режима выравнивания
+	flash_write(FLASH_CONFIG_START_ADDRESS, FLASH_KEY_WORD);										  //Запись ключевого слова
+	flash_write(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP, flash_wr_count);						  //Запись количества сохранений конфигурации
+	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, *(uint32_t *)&DeviceConfiguration); //Запись режима выравнивания
 
 	flash_lock();
 	SendMessage("Current configuration saved");
 }
 
-void DeviceConfigurationInit(void)
+void initDeviceConfig(void)
 {
-
-	SendMessage("Preparing device configuration...");
 	FlashControl.hash = *(__IO uint32_t *)FLASH_CONFIG_START_ADDRESS;
 	FlashControl.write_count = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP);
-
 	if ((FlashControl.write_count != 0xFFFFFFFF) && (FlashControl.hash == FLASH_KEY_WORD))
 	{
-		DeviceConfiguration.AlignMode = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP);
-		DeviceConfiguration.ModeX = *(__IO uint32_t *)(FLASH_CONFIG_START_ADDRESS + 3 * FLASH_BYTE_STEP);
-
-		if (DeviceConfiguration.AlignMode == 0x0)
-		{
-			SendMessage("Sync on Data");
-		}
-		else
-		{
-			SendMessage("Sync on address");
-		}
-
-		if (DeviceConfiguration.ModeX == 0x0)
+		DeviceConfiguration = *(__IO Config *)(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP);
+		if (DeviceConfiguration.DataBusSize == 0xFF)
 		{
 			SendMessage("8-bit mode");
 		}
@@ -463,127 +268,355 @@ void DeviceConfigurationInit(void)
 		{
 			SendMessage("16-bit mode");
 		}
+
+		if (DeviceConfiguration.AlignMode == 0x0)
+		{
+			SendMessage("Sync on DATA");
+		}
+		else
+		{
+			SendMessage("Sync on ADDRESS");
+		}
 		SendMessage("Configuration loaded from FLASH");
 	}
-
 	else
 	{
 		DefaultCommand();
 	}
 }
 
-void ParseUARTMessage(void)
+void parseUARTMessage(char *uart_message)
 {
-	uint32_t cmd_len = strlen(UART_Message.Command);
 
 	uint32_t err_code = 0;
+	uint32_t cmd_len = 0;
+	uint32_t address_len = 0;
+	uint32_t data_len = 0;
+	uint32_t start_address_len = 0;
+	uint32_t stop_address_len = 0;
 
-	if ((strncmp(UART_Message.Command, "WR", cmd_len) == 0) |
-		(strncmp(UART_Message.Command, "WRM", cmd_len) == 0) |
-		(strncmp(UART_Message.Command, "WRP", cmd_len) == 0))
+	/*Выделяем команду из принятого по UART сообщению*/
+	char *cmd = strtok(uart_message, "@");
+	UART_Message.Command = cmd;
+
+	if (UART_Message.Command != NULL)
 	{
-		err_code = Check();
-		if (err_code == 0)
+		cmd_len = (uint32_t)strlen(UART_Message.Command);
+		/*Проходим перебор по пришедшей команде*/
+		/*Команда записи*/
+		if (((strncmp(UART_Message.Command, "WRM", cmd_len) == 0) ||
+			 (strncmp(UART_Message.Command, "WRP", cmd_len) == 0)) &&
+			(strlen(UART_Message.Command) == strlen("WRP")))
 		{
-			CurrentCommand.Command = WRITE;
-			WriteCommand();
+			char *address = strtok(NULL, "=");
+			char *data = strtok(NULL, "");
+			UART_Message.Address = address;
+			UART_Message.Data = data;
+
+			if ((UART_Message.Address != 0) && (UART_Message.Data != 0))
+			{
+				address_len = (uint32_t)strlen(UART_Message.Address);
+				data_len = (uint32_t)strlen(UART_Message.Data);
+				if ((checkHexFormat(UART_Message.Address, address_len) == 0) &&
+					(checkHexFormat(UART_Message.Data, data_len) == 0))
+				{
+					if (checkRange(strtol(UART_Message.Address, 0, 16), 0xFFFFFF) == 0)
+					{
+						if (checkRange(strtol(UART_Message.Data, 0, 16), DeviceConfiguration.DataBusSize) == 0)
+						{
+							if ((DeviceConfiguration.DataBusSize == 0xFFFF) &&
+								(checkParity(strtol(UART_Message.Address, 0, 16)) != 0))
+							{
+								err_code = 3;
+							}
+							else
+							{
+								CurrentCommand.Command = WRITE;
+								CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
+								CurrentCommand.Data = strtol(UART_Message.Data, 0, 16);
+								CurrentCommand.Start_Address = 0x0;
+								CurrentCommand.Stop_Address = 0x0;
+								CurrentCommand.IncrementAddress = 0x0;
+								CurrentCommand.RepeatNumber = 0x0;
+
+								if (UART_Message.Command == "WRM")
+								{
+									CurrentCommand.AttributeSpaceAddress = MEM;
+								}
+								else
+								{
+									CurrentCommand.AttributeSpaceAddress = IO;
+								}
+
+								err_code = 0;
+							}
+						}
+						else
+						{
+							err_code = 1;
+						}
+					}
+					else
+					{
+						err_code = 2;
+					}
+				}
+				else
+				{
+					err_code = 4;
+				}
+			}
+			else
+			{
+				err_code = 9;
+			}
+		}
+
+		/*Команда чтения*/
+		else if (((strncmp(UART_Message.Command, "RDM", strlen("RDM")) == 0) ||
+				  (strncmp(UART_Message.Command, "RDP", strlen("RDP")) == 0)) &&
+				 (strlen(UART_Message.Command) == strlen("RDP")))
+		{
+			char *address = strtok(NULL, "");
+			UART_Message.Address = address;
+			if (UART_Message.Address != 0)
+			{
+				address_len = (uint32_t)strlen(UART_Message.Address);
+
+				if (checkHexFormat(UART_Message.Address, address_len) == 0)
+				{
+					if (checkRange(strtol(UART_Message.Address, 0, 16), 0xFFFFFF) == 0)
+					{
+
+						if ((DeviceConfiguration.DataBusSize == 0xFFFF) &&
+							(checkParity(strtol(UART_Message.Address, 0, 16)) != 0))
+						{
+							err_code = 3;
+						}
+						else
+						{
+							CurrentCommand.Command = READ;
+							CurrentCommand.Address = strtol(UART_Message.Address, 0, 16);
+							CurrentCommand.Data = 0x0;
+							CurrentCommand.Start_Address = 0x0;
+							CurrentCommand.Stop_Address = 0x0;
+							CurrentCommand.IncrementAddress = 0x0;
+							CurrentCommand.RepeatNumber = 0x0;
+
+							if (UART_Message.Command == "RDM")
+							{
+								CurrentCommand.AttributeSpaceAddress = MEM;
+							}
+							else
+							{
+								CurrentCommand.AttributeSpaceAddress = IO;
+							}
+
+							err_code = 0;
+						}
+					}
+					else
+					{
+						err_code = 2;
+					}
+				}
+				else
+				{
+					err_code = 6;
+				}
+			}
+			else
+			{
+				err_code = 9;
+			}
+		}
+
+		/*Команда RAM или ROM*/
+		else if (((strncmp(UART_Message.Command, "RAM", cmd_len) == 0) |
+				  (strncmp(UART_Message.Command, "ROM", cmd_len) == 0)) &&
+				 (strlen(UART_Message.Command) == strlen("ROM")))
+		{
+			char *start_address = strtok(NULL, "-");
+			char *stop_address = strtok(NULL, "");
+			UART_Message.Start_Address = start_address;
+			UART_Message.Stop_Address = stop_address;
+
+			if ((UART_Message.Start_Address != 0) && (UART_Message.Stop_Address != 0))
+			{
+				start_address_len = (uint32_t)strlen(UART_Message.Start_Address);
+				stop_address_len = (uint32_t)strlen(UART_Message.Stop_Address);
+
+				if ((checkHexFormat(UART_Message.Start_Address, start_address_len) == 0) &&
+					checkHexFormat(UART_Message.Stop_Address, stop_address_len) == 0)
+				{
+					if ((checkRange(strtol(UART_Message.Start_Address, 0, 16), strtol(UART_Message.Stop_Address, 0, 16)) == 0) &&
+						(checkRange(strtol(UART_Message.Stop_Address, 0, 16), 0xFFFFFF) == 0))
+					{
+
+						if ((DeviceConfiguration.DataBusSize == 0xFFFF) &&
+							((checkParity(strtol(UART_Message.Start_Address, 0, 16)) != 0) ||
+							 (checkParity(strtol(UART_Message.Stop_Address, 0, 16)) != 0)))
+						{
+							err_code = 3;
+						}
+						else
+						{
+							CurrentCommand.Address = 0x0;
+							CurrentCommand.Data = 0x0;
+							CurrentCommand.Start_Address = strtol(UART_Message.Start_Address, 0, 16);
+							CurrentCommand.Stop_Address = strtol(UART_Message.Stop_Address, 0, 16);
+							CurrentCommand.IncrementAddress = 0x0;
+							CurrentCommand.RepeatNumber = 0x0;
+							CurrentCommand.AttributeSpaceAddress = BLANK;
+
+							if (UART_Message.Command == "RAM")
+							{
+								CurrentCommand.Command = RAM;
+							}
+							else
+							{
+								CurrentCommand.Command = ROM;
+							}
+
+							err_code = 0;
+						}
+					}
+					else
+					{
+						err_code = 2;
+					}
+				}
+				else
+				{
+					err_code = 4;
+				}
+			}
+			else
+			{
+				err_code = 9;
+			}
+		}
+
+		/*Команда повтора*/
+		/** суть в том, чтобы CurrentComman сделать из LastCommand с атрибутом повтора*/
+		else if ((strncmp(UART_Message.Command, "LOOP", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("LOOP")))
+		{
+			char *repeatNumber = strtok(NULL, "@");
+			UART_Message.RepeatNumber = repeatNumber;
+			if (checkRange(strtol(UART_Message.RepeatNumber, 0, 16), 0xFFFFFFFF) == 0)
+			{
+				if ((LastCommand.Command == WRITE) || (LastCommand.Command == READ))
+				{
+					CurrentCommand.Command = LastCommand.Command;
+					CurrentCommand.Address = LastCommand.Address;
+					CurrentCommand.Data = LastCommand.Data;
+					CurrentCommand.Start_Address = LastCommand.Start_Address;
+					CurrentCommand.Stop_Address = LastCommand.Stop_Address;
+					CurrentCommand.IncrementAddress = LastCommand.IncrementAddress;
+					CurrentCommand.RepeatNumber = strtol(UART_Message.RepeatNumber, 0, 16);
+					err_code = 0;
+				}
+				else
+				{
+					err_code = 7;
+				}
+			}
+			else
+			{
+				err_code = 8;
+			}
+			errorType(err_code);
+		}
+
+		/*Команда сохранения текущей конфигурации*/
+		else if ((strncmp(UART_Message.Command, "SAVE", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("SAVE")))
+		{
+			SaveCommand();
+		}
+
+		/*Команда вызова встроенной справки*/
+		else if ((strncmp(UART_Message.Command, "HELP", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("HELP")))
+		{
+			HelpCommand();
+		}
+
+		/*Команда сброса настроек в значение по умолчанию*/
+		else if ((strncmp(UART_Message.Command, "DEFAULT", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("DEFAULT")))
+		{
+			DefaultCommand();
+		}
+
+		/*Команда установки размера данных 8 бит*/
+		else if ((strncmp(UART_Message.Command, "SB", strlen(UART_Message.Command)) == 0) &&
+				 strlen(UART_Message.Command) == strlen("SB"))
+		{
+			DeviceConfiguration.DataBusSize = 0xFF;
+			SendMessage("8-bit mode");
+		}
+
+		/*Команда установки размера данных 16 бит*/
+		else if ((strncmp(UART_Message.Command, "SW", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("SW")))
+		{
+			DeviceConfiguration.DataBusSize = 0xFFFF;
+			SendMessage("16-bit mode");
+		}
+
+		/*Команда выравнивания по данным*/
+		else if ((strncmp(UART_Message.Command, "SD", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("SD")))
+		{
+			DeviceConfiguration.AlignMode = 0x0;
+			SendMessage("Sync on DATA");
+		}
+
+		/*Команда выравнивания по адресу*/
+		else if ((strncmp(UART_Message.Command, "SA", strlen(UART_Message.Command)) == 0) &&
+				 (strlen(UART_Message.Command) == strlen("SA")))
+		{
+			DeviceConfiguration.AlignMode = 0x1;
+			SendMessage("Sync on ADDRESS");
 		}
 		else
 		{
-			errorType(err_code);
+			err_code = 10;
 		}
-	}
-	else if ((strncmp(UART_Message.Command, "RD", cmd_len) == 0) |
-			 (strncmp(UART_Message.Command, "RDM", cmd_len) == 0) |
-			 (strncmp(UART_Message.Command, "RDP", cmd_len) == 0))
-	{
-		err_code = Check();
-		if (err_code == 0)
-		{
-			CurrentCommand.Command = READ;
-			ReadCommand();
-		}
-		else
-		{
-			errorType(err_code);
-		}
-	}
-	else if ((strncmp(UART_Message.Command, "LOOP", 4) == 0))
-	{
-		//RepeatCommand();
-	}
-	else if ((strncmp(UART_Message.Command, "SAVE", 4) == 0))
-	{
-		SaveCommand();
-	}
-	else if (strncmp(UART_Message.Command, "HELP", 4) == 0)
-	{
-		HelpCommand();
-	}
-	else if (strncmp(UART_Message.Command, "DEFAULT", sizeof("DEFAULT")) == 0)
-	{
-		DefaultCommand();
-	}
-	else if (strncmp(UART_Message.Command, "SB", cmd_len) == 0)
-	{
-		DeviceConfiguration.ModeX = 0x0;
-		SendMessage("8-bit mode");
-	}
-	else if (strncmp(UART_Message.Command, "SW", cmd_len) == 0)
-	{
-		DeviceConfiguration.ModeX = 0x1;
-		SendMessage("16-bit mode");
-	}
-	else if (strncmp(UART_Message.Command, "SD", cmd_len) == 0)
-	{
-		DeviceConfiguration.AlignMode = 0x0;
-		SendMessage("Sync on DATA");
-	}
-	else if (strncmp(UART_Message.Command, "SA", cmd_len) == 0)
-	{
-		DeviceConfiguration.AlignMode = 0x1;
-		SendMessage("Sync on ADDRESS");
 	}
 	else
 	{
-		SendMessage(MessageUnknowCommand);
+		err_code = 9;
 	}
-	return;
-}
 
-void Lexem_UART_Message(char *uart_message)
-{
-	//	UART_Message = {0, 0, 0};
-	char *cmd = strtok(uart_message, "@");
-	char *address = strtok(NULL, "=");
-	char *data = strtok(NULL, "");
-	UART_Message.Command = cmd;
-	UART_Message.Address = address;
-	UART_Message.Data = data;
-	ParseUARTMessage();
+	errorType(err_code);
+	return;
 }
 
 void RecieveMessage(char data)
 {
-	data = toupper(data);
-	if (rec_len < UART_RECIEVE_BUFFER - 1)
+	data = toupper(data);				   /*Функция преобразования строчной буквы в прописную*/
+	if (rec_len < UART_RECIEVE_BUFFER - 1) /*Проверка переполнения буфера UART*/
 	{
 		if (data == 13)
 		{
 			SendMessage(">");
-			received[rec_len++] = 0;	  // делаем нуль-терминированную строку
-			Lexem_UART_Message(received); // отправляем принятую команду на обработку
-			rec_len = 0;				  // очищаем буфер приёма
+			recieved[rec_len++] = 0;	/*Делаем нуль-терминированную строку*/
+			parseUARTMessage(recieved); /*Отправляем принятую команду на обработку*/
+			rec_len = 0;				/*Очищаем буфер приёма*/
 		}
 		else
 		{
-			received[rec_len++] = data; // Складываем символ в приёмный буфер
+			recieved[rec_len++] = data; /*Размещаем принятый символ в приёмный буфер*/
 		}
 	}
 	else
 	{
+		/*При переполнении буфера UART_RECIEVE_BUFFER выдаем сообщение в терминал*/
 		SendMessage("Too long command");
-		rec_len = 0;
+		rec_len = 0; /*Обнуляем счетчик принятого сообщения*/
 	}
 }
 
@@ -601,28 +634,23 @@ void USART1_IRQHandler(void)
 	}
 }
 
-void TIM1_UP_IRQHandler(void)
-{
-	TIM1->SR &= ~TIM_SR_UIF; //очистили статус регистр
-	if (GPIOB->ODR & GPIO_ODR_ODR0)
-	{
-		GPIOB->ODR &= ~GPIO_ODR_ODR0;
-	}
-	else
-	{
-		GPIOB->ODR |= GPIO_ODR_ODR0;
-	}
-}
-
 /*MAIN*/
-int main(int argc, char *argv[])
+int main()
 {
 	IO_Init();
-	USARTInit();
-	IRQHandlerInit();
-	TIM1_Init_ms_timer();
-	DeviceConfigurationInit();
+	initUSART1_19200();
+	initIRQHandler();
+	initTIM1_msTimer();
+	initTIM3CH3_externalCounter();
+	initDeviceConfig();
 	SendMessage("Ready");
+	for (uint32_t i = 0; i < 100; i++)
+	{
+		char rMessage[UART_RECIEVE_BUFFER];
+		uint8_t TIM3count = TIM3->CNT;
+		snprintf(rMessage, UART_RECIEVE_BUFFER, "%X", TIM3count);
+		SendMessage(rMessage);
+	}
 	while (1)
 	{
 	}

@@ -1,3 +1,6 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include <gpio_stm32f1.h>
 
 const tGPIO_Line IOs[] = {
@@ -62,7 +65,7 @@ const tGPIO_Line IOs[] = {
 	{GPIOA, 9, OUT_50MHz + OUT_PP, HIGH},  //UART_TX
 	{GPIOA, 10, OUT_50MHz + OUT_PP, HIGH}, //UART_RX
 
-	{GPIOB, 0, IN, HIGH} //CLK IN
+	{GPIOB, 5, IN, HIGH} //i_externalOSC
 };
 
 const uint32_t cIO_COUNT = sizeof(IOs) / sizeof(tGPIO_Line);
@@ -91,7 +94,7 @@ void IO_ConfigLine(tIOLine Line, uint8_t Mode, uint8_t State)
 	if (IOs[Line].GPIO_Pin < 8) // Определяем в старший или младший регистр надо запихивать данные.
 	{
 		IOs[Line].GPIOx->CRL &= ~(0x0F << (IOs[Line].GPIO_Pin * 4)); // Стираем биты
-		IOs[Line].GPIOx->CRL |= Mode << (IOs[Line].GPIO_Pin * 4);	// Вносим нашу битмаску, задвинув ее на нужное место.
+		IOs[Line].GPIOx->CRL |= Mode << (IOs[Line].GPIO_Pin * 4);	 // Вносим нашу битмаску, задвинув ее на нужное место.
 	}
 	else
 	{
@@ -122,8 +125,14 @@ void IO_InvertLine(tIOLine Line)
 
 int IO_GetLine(tIOLine Line)
 {
+	uint32_t State = 0;
 	if (Line < cIO_COUNT)
-		return ((IOs[Line].GPIOx->IDR) & (1 << IOs[Line].GPIO_Pin));
+	{
+		State = ((IOs[Line].GPIOx->IDR) & (1 << IOs[Line].GPIO_Pin));
+	}
 	else
-		return 0;
+	{
+		State = 0;
+	}
+	return State;
 }

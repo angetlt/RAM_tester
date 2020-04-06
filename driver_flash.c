@@ -1,5 +1,6 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 /**
 @brief Драйвер записи и чтения FLASH памяти микроконтроллера STM32F103
 Использование:
@@ -46,7 +47,7 @@ static uint8_t flash_ready(void)
 //Функция стирает ВСЕ страницы. При её вызове прошивка самоуничтожается
 void flash_erase_all_pages(void)
 {
-	FLASH->CR |= FLASH_CR_MER;  //Устанавливаем бит стирания ВСЕХ страниц
+	FLASH->CR |= FLASH_CR_MER;	//Устанавливаем бит стирания ВСЕХ страниц
 	FLASH->CR |= FLASH_CR_STRT; //Начать стирание
 	while (!flash_ready())
 		; // Ожидание готовности
@@ -57,7 +58,7 @@ void flash_erase_all_pages(void)
 //принадлежащий диапазону адресов той странице которую нужно очистить.
 void flash_erase_page(uint32_t address)
 {
-	FLASH->CR |= FLASH_CR_PER;  //Устанавливаем бит стирания одной страницы
+	FLASH->CR |= FLASH_CR_PER;	//Устанавливаем бит стирания одной страницы
 	FLASH->AR = address;		// Задаем её адрес
 	FLASH->CR |= FLASH_CR_STRT; // Запускаем стирание
 	while (!flash_ready())
