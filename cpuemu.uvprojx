@@ -446,14 +446,14 @@
               <FilePath>.\init_stm32f103.c</FilePath>
             </File>
             <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\core_cm3.c</FilePath>
-            </File>
-            <File>
               <FileName>gpio_stm32f1.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\gpio_stm32f1.c</FilePath>
+            </File>
+            <File>
+              <FileName>hwIndependentFunctions.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hwIndependentFunctions.c</FilePath>
             </File>
           </Files>
         </Group>

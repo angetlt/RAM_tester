@@ -1,7 +1,0 @@
---c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware
--I.\RTE\Device\STM32F103VE
--I.\RTE\_Target_1
--I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"
--I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"
--D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD
--o .\objects\init_stm32f103.o --omf_browse .\objects\init_stm32f103.crf --depend .\objects\init_stm32f103.d --feedback ".\Objects\cpuemu.fed" "init_stm32f103.c"
