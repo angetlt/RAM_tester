@@ -62,25 +62,23 @@ const tGPIO_Line IOs[] = {
 	{GPIOC, 9, OUT_50MHz + OUT_PP, HIGH}, //DT/R
 
 	//альтернативная функция
-	{GPIOA, 9, OUT_50MHz + OUT_PP, HIGH},  //UART_TX
-	{GPIOA, 10, OUT_50MHz + OUT_PP, HIGH}, //UART_RX
+	{GPIOA, 9, OUT_50MHz + OUT_PP, HIGH}, //UART_TX
+	{GPIOA, 10, OUT_50MHz + OUT_PP, HIGH} //UART_RX
 
-	{GPIOB, 5, IN, HIGH} //i_externalOSC
 };
 
 const uint32_t cIO_COUNT = sizeof(IOs) / sizeof(tGPIO_Line);
 
 void IO_Init(void)
 {
-	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-	RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
-	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-	RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
-	RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
-	//RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
-	//RCC->APB2ENR |= RCC_APB2ENR_IOPGEN;
-
-	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN; //Включение тактирования GPIO A
+	RCC->APB2ENR |= RCC_APB2ENR_IOPBEN; //Включение тактирования GPIO B
+	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN; //Включение тактирования GPIO C
+	RCC->APB2ENR |= RCC_APB2ENR_IOPDEN; //Включение тактирования GPIO D
+	RCC->APB2ENR |= RCC_APB2ENR_IOPEEN; //Включение тактирования GPIO E
+	//RCC->APB2ENR |= RCC_APB2ENR_IOPFEN; //Включение тактирования GPIO F
+	//RCC->APB2ENR |= RCC_APB2ENR_IOPGEN; //Включение тактирования GPIO G
+	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN; //Включение альтернативной функции GPIO
 
 	// В цикле пробегаемся по нашему массиву и конфигурируем.
 	for (int Line = 0; Line < cIO_COUNT; Line++)

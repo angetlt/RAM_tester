@@ -25,4 +25,4 @@ void initTIM1_msTimer(void);
  * Функция инициализации прерваний микроконтроллера
  * Для использования вызвать функцию initIRQHandler();
 */
-void initTIM3CH3_externalCounter(void);
+void initTIM3CH2_externalCounter(void);

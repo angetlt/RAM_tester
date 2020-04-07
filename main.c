@@ -9,7 +9,6 @@
  * TODO:
  * - Реализовать проверку на правильность данных при чтении настроек с Flash
  * - Переделать char на uint8_t
- * - Реализовать счетчик, работающий от внешнего генератора TIM3 GPIOB 5 (канал 2). Не работает
  * - Реализовать парсинг команд FDP, FDM
  * 
  * Используемый микроконтроллер STM32F103VE (high-density)
@@ -199,7 +198,7 @@ void errorType(uint32_t err_number)
 	switch (err_number)
 	{
 	case 0:
-		SendMessage("No errors");
+		SendMessage(strcat(recieved, " have no errors"));
 		break;
 	case 1:
 		SendMessage("Data out of range");
@@ -641,16 +640,11 @@ int main()
 	initUSART1_19200();
 	initIRQHandler();
 	initTIM1_msTimer();
-	initTIM3CH3_externalCounter();
+	initTIM3CH2_externalCounter();
 	initDeviceConfig();
+	delay_ms(1000); //Задержка для обновления всех регистров таймеров
 	SendMessage("Ready");
-	for (uint32_t i = 0; i < 100; i++)
-	{
-		char rMessage[UART_RECIEVE_BUFFER];
-		uint8_t TIM3count = TIM3->CNT;
-		snprintf(rMessage, UART_RECIEVE_BUFFER, "%X", TIM3count);
-		SendMessage(rMessage);
-	}
+
 	while (1)
 	{
 	}

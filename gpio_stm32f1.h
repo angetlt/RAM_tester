@@ -91,9 +91,7 @@ typedef enum
 	o_DTR,
 
 	o_UART_TX,
-	o_UART_RX,
-
-	i_externalOSC
+	o_UART_RX
 
 } tIOLine;
 

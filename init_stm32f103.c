@@ -1,10 +1,10 @@
-
 #include <stm32f10x.h>
 
 /*TIMERS PRESCALLER*/
 #define US (SystemCoreClock / 1000000) - 1
 #define MS (SystemCoreClock / 2000) - 1
 #define EXTERNAL_OSC_CYCLE 7
+#define PRESCALLER_NOT_USE 0
 
 /**
  * Функция инициализации USART1 микроконтроллера
@@ -58,38 +58,37 @@ void initTIM1_msTimer(void)
 }
 
 /**
- * Функция инициализации таймера TIM3 микроконтроллера как счетчик внешних импульсов.
+ * Функция инициализации таймера TIM3_CH2 микроконтроллера как счетчик внешних импульсов.
  * Один счет таймера равен одному тику внешнего генератора
  * Частота тактирования контроллера должна быть как минимум в 2 раза выше измеряемой частоты,
  * т.к. таймеры в STM32F103 синхронные.
  * TIM3 тактируется по шине APB1. Но счет видет внешних импульсов.
 */
-void initTIM3CH3_externalCounter(void)
+void initTIM3CH2_externalCounter(void)
 {
-	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; //Включение тактирования TIM3
-	TIM3->CR1 |= TIM_CR1_ARPE;			//Использование ARR - предельное значение счета
-	TIM3->CR1 &= ~TIM_CR1_OPM;			//DO NOT STOP counting after event
-	//TIM3->CR1 &= ~TIM_CR1_DIR;			//Счет вверх (идет от меньшего к большему)
+	AFIO->MAPR |= AFIO_MAPR_TIM3_REMAP_PARTIALREMAP; //Ремапим альтернативную функцию TIM3
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;				 //Включение тактирования TIM3
 
-	TIM3->DIER = 0x0;		   //Не вызывать прерывание при достижении ARR
-	TIM3->PSC = 0;			   //Не использовать предделитель
-	TIM3->CR1 &= ~TIM_CR1_CEN; //Остановили счетчик
-
-	TIM3->ARR = EXTERNAL_OSC_CYCLE; //Ограничение счетчика значением 7 (8 импульсов внешнего генератора OSC)
+	TIM3->CR1 |= TIM_CR1_ARPE;		//Использование ARR - предельное значение счета
+	TIM3->CR1 &= ~TIM_CR1_OPM;		//DO NOT STOP counting after event
+	TIM3->DIER = 0x0;				//Не вызывать прерывание при достижении ARR
+	TIM3->PSC = PRESCALLER_NOT_USE; //Не использовать предделитель
 
 	/*Записываем в регистр CCMR2=01*/
-	TIM3->CCMR1 |= TIM_CCMR1_CC2S_0; //Нулевой бит
-	//TIM3->CCMR1 &= ~TIM_CCMR1_CC2S_1; //Первый бит
-
-	TIM3->CCMR1 &= ~TIM_CCMR1_IC2F; //Не используем фильтр - ишем в регистр CCMR2 IC3F = 0000
-	TIM3->CCER &= ~TIM_CCER_CC2P;	//Счет вверх по положительному фронту
-	TIM3->SMCR |= TIM_SMCR_SMS;		//Устанавливаем внешний источник тактирования счетчика
-
+	TIM3->CCMR1 |= TIM_CCMR1_CC2S_0;  //Нулевой бит
+	TIM3->CCMR1 &= ~TIM_CCMR1_CC2S_1; //Первый бит
+	TIM3->CCMR1 |= TIM_CCMR1_IC2F_3;  //Используем фильтр - пишем в регистр CCMR2 IC3F = 1000
+	TIM3->CCER &= ~TIM_CCER_CC2P;	  //Счет вверх по положительному фронту
+	TIM3->SMCR |= TIM_SMCR_SMS;		  //Устанавливаем внешний источник тактирования счетчика
 	/*Записываем в регистр TS=110*/
 	TIM3->SMCR &= ~TIM_SMCR_TS_0;
 	TIM3->SMCR |= TIM_SMCR_TS_1;
 	TIM3->SMCR |= TIM_SMCR_TS_2;
-	TIM3->CR1 |= TIM_CR1_URS; //Обновление (используется для принятия настроек)
-	//TIM3->CNT = 0x0;		  //Начальное значение равно нулю
-	TIM3->CR1 |= TIM_CR1_CEN; //Запустили счетчик
+
+	TIM3->CR1 |= TIM_CR1_URS;		//Обновление (используется для принятия настроек)
+	TIM3->CNT &= ~(0xFFFF);			//Начальное значение равно нулю
+	TIM3->ARR = EXTERNAL_OSC_CYCLE; //Ограничение счетчика значением 7 (цикл из 8 импульсов внешнего генератора OSC)
+	TIM3->CR1 &= ~TIM_CR1_CEN;		//Остановили счетчик
+	TIM3->CR1 |= TIM_CR1_URS;		//Обновление (используется для принятия настроек)
+	TIM3->CR1 |= TIM_CR1_CEN;		//Запустили счетчик
 }
