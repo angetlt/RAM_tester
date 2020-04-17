@@ -1,16 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <ctype.h>
-
-#include <stm32f10x.h>
-
-#include <gpio_stm32f1.h>
-#include <driver_flash.h>
-#include <init_stm32f103.h>
-#include <hwIndependentFunctions.h>
-
 /*FLASH MACROS*/
 #define FLASH_CONFIG_START_ADDRESS ((uint32_t)0x0800F000)
 #define FLASH_KEY_WORD ((uint32_t)0x248F135B)
@@ -96,3 +83,13 @@ void USART1_IRQHandler(void);
 void initDeviceConfig(void);
 
 void errorType(uint32_t err_number);
+
+/**
+ * Функция сброса текущей команды CurrentCommand в состояние EMPTY
+ */
+void resetCC(void);
+
+/**
+ * Функция копирования CurrentCommand в LastCommand
+ */
+void copyCCtoLC(void);

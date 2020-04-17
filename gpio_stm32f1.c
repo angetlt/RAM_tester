@@ -1,6 +1,3 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include <gpio_stm32f1.h>
 
 const tGPIO_Line IOs[] = {
@@ -48,17 +45,17 @@ const tGPIO_Line IOs[] = {
 	{GPIOE, 1, IN, HIGH},  //Data_D01
 	{GPIOE, 0, IN, HIGH},  //Data_D00
 
-	{GPIOA, 8, OUT_50MHz + OUT_PP, HIGH},  //ALE
-	{GPIOA, 11, OUT_50MHz + OUT_PP, HIGH}, //LDS
-	{GPIOA, 12, OUT_50MHz + OUT_PP, HIGH}, //UDS
+	{GPIOA, 8, OUT_50MHz + OUT_PP, HIGH},  //ALE - Address Lock Enable
+	{GPIOA, 11, OUT_50MHz + OUT_PP, HIGH}, //LDS - Low Data Set
+	{GPIOA, 12, OUT_50MHz + OUT_PP, HIGH}, //UDS - Upper Data Set
 
 	{GPIOC, 0, OUT_50MHz + OUT_PP, HIGH}, //BHE
 	{GPIOC, 1, OUT_50MHz + OUT_PP, HIGH}, //AS
-	{GPIOC, 2, OUT_50MHz + OUT_PP, HIGH}, //WR
-	{GPIOC, 3, OUT_50MHz + OUT_PP, HIGH}, //RD
+	{GPIOC, 2, OUT_50MHz + OUT_PP, HIGH}, //WR - Write
+	{GPIOC, 3, OUT_50MHz + OUT_PP, HIGH}, //RD - Read
 	{GPIOC, 6, IN, HIGH},				  //SYNC
-	{GPIOC, 7, IN, HIGH},				  //RDY
-	{GPIOC, 8, OUT_50MHz + OUT_PP, HIGH}, //MRQ
+	{GPIOC, 7, IN, HIGH},				  //RDY - Ready
+	{GPIOC, 8, OUT_50MHz + OUT_PP, HIGH}, //MRQ -
 	{GPIOC, 9, OUT_50MHz + OUT_PP, HIGH}, //DT/R
 
 	//альтернативная функция

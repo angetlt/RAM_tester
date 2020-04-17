@@ -1,0 +1,16 @@
+{
+	//"cortex-debug.armToolchainPath": "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/Linux/gcc_arm/bin",
+	"cortex-debug.enableTelemetry": false,
+	"cortex-debug.JLinkGDBServerPath": "C:/Program Files (x86)/SEGGER/JLink/JLinkGDBServerCL.exe",
+	"files.associations": {
+		"freertos.h": "c",
+		"stm32f10x.h": "c",
+		"gpio_stm32f1.h": "c",
+		"stdio.h": "c",
+		"main.h": "c",
+		"driver_flash.h": "c"
+	},
+	"stm32-for-vscode.makePath": "make",
+	"stm32-for-vscode.armToolchainPath": "",
+	"cortex-debug.armToolchainPath": ""
+}

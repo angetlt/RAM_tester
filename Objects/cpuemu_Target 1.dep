@@ -1,11 +1,10 @@
 Dependencies for Project 'cpuemu', Target 'Target 1': (DO NOT MODIFY !)
-F (.\main.c)(0x5E8C5835)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
-I (..\RAM_tester\main.h)(0x5E8C54C5)
+F (.\main.c)(0x5E91E0C1)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (R:\STM\uVision 5\ARM\ARMCC\include\ctype.h)(0x588BBB84)
+I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
 I (R:\STM\uVision 5\ARM\ARMCC\include\stdio.h)(0x588BBB84)
 I (R:\STM\uVision 5\ARM\ARMCC\include\stdlib.h)(0x588BBB84)
-I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)
 I (R:\STM\uVision 5\ARM\ARMCC\include\string.h)(0x588BBB84)
-I (R:\STM\uVision 5\ARM\ARMCC\include\ctype.h)(0x588BBB84)
 I (..\RAM_tester\stm32f10x.h)(0x582570AC)
 I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
 I (..\RAM_tester\core_cm3.h)(0x5D25E860)
@@ -13,10 +12,11 @@ I (..\RAM_tester\cmsis_version.h)(0x5D25E860)
 I (..\RAM_tester\cmsis_compiler.h)(0x5D25E860)
 I (R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25C8F6)
 I (..\RAM_tester\system_stm32f10x.h)(0x582570AC)
-I (..\RAM_tester\gpio_stm32f1.h)(0x5E8C581B)
-I (..\RAM_tester\driver_flash.h)(0x5D2F6028)
-I (..\RAM_tester\init_stm32f103.h)(0x5E8C5818)
-I (..\RAM_tester\hwIndependentFunctions.h)(0x5E8B868E)
+I (driver_flash.h)(0x5D2F6028)
+I (gpio_stm32f1.h)(0x5E91E125)
+I (hwIndependentFunctions.h)(0x5E8B868E)
+I (init_stm32f103.h)(0x5E8C5818)
+I (main.h)(0x5E91E0BF)
 F (.\driver_flash.c)(0x5E89DD9F)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\driver_flash.o --omf_browse .\objects\driver_flash.crf --depend .\objects\driver_flash.d)
 I (..\RAM_tester\stm32f10x.h)(0x582570AC)
 I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
@@ -35,8 +35,8 @@ I (..\RAM_tester\cmsis_version.h)(0x5D25E860)
 I (..\RAM_tester\cmsis_compiler.h)(0x5D25E860)
 I (R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25C8F6)
 I (..\RAM_tester\system_stm32f10x.h)(0x582570AC)
-F (.\gpio_stm32f1.c)(0x5E8C581C)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\gpio_stm32f1.o --omf_browse .\objects\gpio_stm32f1.crf --depend .\objects\gpio_stm32f1.d)
-I (..\RAM_tester\gpio_stm32f1.h)(0x5E8C581B)
+F (.\gpio_stm32f1.c)(0x5E91E0F0)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\gpio_stm32f1.o --omf_browse .\objects\gpio_stm32f1.crf --depend .\objects\gpio_stm32f1.d)
+I (..\RAM_tester\gpio_stm32f1.h)(0x5E91E125)
 I (..\RAM_tester\stm32f10x.h)(0x582570AC)
 I (.\RTE\_Target_1\RTE_Components.h)(0x5E5F5B15)
 I (..\RAM_tester\core_cm3.h)(0x5D25E860)
@@ -45,7 +45,7 @@ I (..\RAM_tester\cmsis_version.h)(0x5D25E860)
 I (..\RAM_tester\cmsis_compiler.h)(0x5D25E860)
 I (R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5D25C8F6)
 I (..\RAM_tester\system_stm32f10x.h)(0x582570AC)
-F (.\hwIndependentFunctions.c)(0x5E8B868E)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\hwindependentfunctions.o --omf_browse .\objects\hwindependentfunctions.crf --depend .\objects\hwindependentfunctions.d)
+F (.\hwIndependentFunctions.c)(0x5E8C5BAB)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --enum_is_int -I ..\firmware -I ..\firmware -I ..\firmware -I ..\RAM_tester-I.\RTE\Device\STM32F103VE-I.\RTE\_Target_1-I"R:\STM\uVision 5\ARM\PACK\ARM\CMSIS\5.6.0\CMSIS\Core\Include"-I"R:\STM\uVision 5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include"-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_HD-o .\objects\hwindependentfunctions.o --omf_browse .\objects\hwindependentfunctions.crf --depend .\objects\hwindependentfunctions.d)
 I (..\RAM_tester\hwIndependentFunctions.h)(0x5E8B868E)
 I (R:\STM\uVision 5\ARM\ARMCC\include\ctype.h)(0x588BBB84)
 I (R:\STM\uVision 5\ARM\ARMCC\include\stdint.h)(0x588BBB84)

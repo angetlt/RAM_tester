@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "arm_c_cpp_properties",
+            "compilerPath": "R:/MCU-tools/arm-gcc/bin/arm-none-eabi-gcc.exe",
+            "includePath": [
+                "R:/MCU-tools/arm-gcc/arm-none-eabi/include",
+                "R:/MCU-tools/arm-gcc/arm-none-eabi/include/sys/",
+                "R:/MCU-tools/arm-gcc/lib/**",
+                "${workspaceRoot}/**"
+            ],
+            "defines": [
+                "STM32F103xx",
+                "M3",
+                "GCC_ARMCM3"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

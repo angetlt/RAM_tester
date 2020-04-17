@@ -1,5 +1,4 @@
 #include <stm32f10x.h>
-
 #define IN (0x00)
 #define OUT_10MHz (0x01)
 #define OUT_2MHz (0x02)

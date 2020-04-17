@@ -37,8 +37,19 @@
  *	PB5 - IN - TIM3_CH2 (alternate function)
  *	Вход тактирования
 */
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <main.h>
+#include <stm32f10x.h>
+
+#include "driver_flash.h"
+#include "gpio_stm32f1.h"
+#include "hwIndependentFunctions.h"
+#include "init_stm32f103.h"
+#include "main.h"
 
 /*Global*/
 Message UART_Message;
@@ -52,6 +63,23 @@ char recieved[UART_RECIEVE_BUFFER];
 uint32_t rec_len = 0;
 
 /*Functions*/
+void resetCC(void)
+{
+	CurrentCommand.Command = EMPTY;
+	CurrentCommand.AttributeSpaceAddress = BLANK;
+	CurrentCommand.Address = 0x0;
+	CurrentCommand.Start_Address = 0x0;
+	CurrentCommand.Stop_Address = 0x0;
+	CurrentCommand.IncrementAddress = 0x0;
+	CurrentCommand.Data = 0x0;
+	CurrentCommand.RepeatNumber = 0x0;
+}
+
+void copyCCtoLC(void)
+{
+	LastCommand = CurrentCommand;
+}
+
 void delay_ms(uint16_t Count_ms)
 {
 	TIM1->ARR = Count_ms + Count_ms; //Указывает значения достигнув которого таймер остановится
@@ -246,7 +274,7 @@ void SaveCommand(void)
 
 	flash_write(FLASH_CONFIG_START_ADDRESS, FLASH_KEY_WORD);										  //Запись ключевого слова
 	flash_write(FLASH_CONFIG_START_ADDRESS + FLASH_BYTE_STEP, flash_wr_count);						  //Запись количества сохранений конфигурации
-	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, *(uint32_t *)&DeviceConfiguration); //Запись режима выравнивания
+	flash_write(FLASH_CONFIG_START_ADDRESS + 2 * FLASH_BYTE_STEP, *(uint32_t *)&DeviceConfiguration); //Запись конфигурации устройства
 
 	flash_lock();
 	SendMessage("Current configuration saved");
