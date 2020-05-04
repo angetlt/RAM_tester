@@ -1,0 +1,2131 @@
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"main.c"
+  12              		.text
+  13              		.section	.text.resetCC,"ax",%progbits
+  14              		.align	1
+  15              		.global	resetCC
+  16              		.arch armv7-m
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	resetCC:
+  23              		@ args = 0, pretend = 0, frame = 0
+  24              		@ frame_needed = 0, uses_anonymous_args = 0
+  25              		@ link register save eliminated.
+  26 0000 054B     		ldr	r3, .L2
+  27 0002 0022     		movs	r2, #0
+  28 0004 1A70     		strb	r2, [r3]
+  29 0006 5A70     		strb	r2, [r3, #1]
+  30 0008 5A60     		str	r2, [r3, #4]
+  31 000a 9A60     		str	r2, [r3, #8]
+  32 000c DA60     		str	r2, [r3, #12]
+  33 000e 1A61     		str	r2, [r3, #16]
+  34 0010 9A82     		strh	r2, [r3, #20]	@ movhi
+  35 0012 DA82     		strh	r2, [r3, #22]	@ movhi
+  36 0014 7047     		bx	lr
+  37              	.L3:
+  38 0016 00BF     		.align	2
+  39              	.L2:
+  40 0018 00000000 		.word	.LANCHOR0
+  42              		.section	.text.copyCCtoLC,"ax",%progbits
+  43              		.align	1
+  44              		.global	copyCCtoLC
+  45              		.syntax unified
+  46              		.thumb
+  47              		.thumb_func
+  48              		.fpu softvfp
+  50              	copyCCtoLC:
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  54 0000 30B4     		push	{r4, r5}
+  55 0002 054C     		ldr	r4, .L6
+  56 0004 054D     		ldr	r5, .L6+4
+  57 0006 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+  58 0008 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+  59 000a 95E80300 		ldm	r5, {r0, r1}
+  60 000e 84E80300 		stm	r4, {r0, r1}
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 2
+
+
+  61 0012 30BC     		pop	{r4, r5}
+  62 0014 7047     		bx	lr
+  63              	.L7:
+  64 0016 00BF     		.align	2
+  65              	.L6:
+  66 0018 00000000 		.word	.LANCHOR1
+  67 001c 00000000 		.word	.LANCHOR0
+  69              		.section	.text.delay_ms,"ax",%progbits
+  70              		.align	1
+  71              		.global	delay_ms
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  75              		.fpu softvfp
+  77              	delay_ms:
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		@ link register save eliminated.
+  81 0000 4000     		lsls	r0, r0, #1
+  82 0002 80B2     		uxth	r0, r0
+  83 0004 0C4B     		ldr	r3, .L11
+  84 0006 9885     		strh	r0, [r3, #44]	@ movhi
+  85 0008 9A8A     		ldrh	r2, [r3, #20]
+  86 000a 42F00102 		orr	r2, r2, #1
+  87 000e 9A82     		strh	r2, [r3, #20]	@ movhi
+  88 0010 0022     		movs	r2, #0
+  89 0012 9A84     		strh	r2, [r3, #36]	@ movhi
+  90 0014 1A88     		ldrh	r2, [r3]
+  91 0016 42F00102 		orr	r2, r2, #1
+  92 001a 1A80     		strh	r2, [r3]	@ movhi
+  93 001c 1A46     		mov	r2, r3
+  94              	.L9:
+  95 001e 138A     		ldrh	r3, [r2, #16]
+  96 0020 13F0010F 		tst	r3, #1
+  97 0024 FBD0     		beq	.L9
+  98 0026 044A     		ldr	r2, .L11
+  99 0028 138A     		ldrh	r3, [r2, #16]
+ 100 002a 23F00103 		bic	r3, r3, #1
+ 101 002e 1B04     		lsls	r3, r3, #16
+ 102 0030 1B0C     		lsrs	r3, r3, #16
+ 103 0032 1382     		strh	r3, [r2, #16]	@ movhi
+ 104 0034 7047     		bx	lr
+ 105              	.L12:
+ 106 0036 00BF     		.align	2
+ 107              	.L11:
+ 108 0038 002C0140 		.word	1073818624
+ 110              		.section	.text.DataBusRead,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	DataBusRead
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 116              		.fpu softvfp
+ 118              	DataBusRead:
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121              		@ link register save eliminated.
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 3
+
+
+ 122 0000 084B     		ldr	r3, .L14
+ 123 0002 1A68     		ldr	r2, [r3]
+ 124 0004 42F08832 		orr	r2, r2, #-2004318072
+ 125 0008 1A60     		str	r2, [r3]
+ 126 000a 5A68     		ldr	r2, [r3, #4]
+ 127 000c 42F08832 		orr	r2, r2, #-2004318072
+ 128 0010 5A60     		str	r2, [r3, #4]
+ 129 0012 1A68     		ldr	r2, [r3]
+ 130 0014 02F0CC32 		and	r2, r2, #-858993460
+ 131 0018 1A60     		str	r2, [r3]
+ 132 001a 5A68     		ldr	r2, [r3, #4]
+ 133 001c 02F0CC32 		and	r2, r2, #-858993460
+ 134 0020 5A60     		str	r2, [r3, #4]
+ 135 0022 7047     		bx	lr
+ 136              	.L15:
+ 137              		.align	2
+ 138              	.L14:
+ 139 0024 00180140 		.word	1073813504
+ 141              		.section	.text.DataBusWrite,"ax",%progbits
+ 142              		.align	1
+ 143              		.global	DataBusWrite
+ 144              		.syntax unified
+ 145              		.thumb
+ 146              		.thumb_func
+ 147              		.fpu softvfp
+ 149              	DataBusWrite:
+ 150              		@ args = 0, pretend = 0, frame = 0
+ 151              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152              		@ link register save eliminated.
+ 153 0000 084B     		ldr	r3, .L17
+ 154 0002 1A68     		ldr	r2, [r3]
+ 155 0004 02F03332 		and	r2, r2, #858993459
+ 156 0008 1A60     		str	r2, [r3]
+ 157 000a 5A68     		ldr	r2, [r3, #4]
+ 158 000c 02F03332 		and	r2, r2, #858993459
+ 159 0010 5A60     		str	r2, [r3, #4]
+ 160 0012 1A68     		ldr	r2, [r3]
+ 161 0014 42F03332 		orr	r2, r2, #858993459
+ 162 0018 1A60     		str	r2, [r3]
+ 163 001a 5A68     		ldr	r2, [r3, #4]
+ 164 001c 42F03332 		orr	r2, r2, #858993459
+ 165 0020 5A60     		str	r2, [r3, #4]
+ 166 0022 7047     		bx	lr
+ 167              	.L18:
+ 168              		.align	2
+ 169              	.L17:
+ 170 0024 00180140 		.word	1073813504
+ 172              		.section	.text.SendMessage,"ax",%progbits
+ 173              		.align	1
+ 174              		.global	SendMessage
+ 175              		.syntax unified
+ 176              		.thumb
+ 177              		.thumb_func
+ 178              		.fpu softvfp
+ 180              	SendMessage:
+ 181              		@ args = 0, pretend = 0, frame = 0
+ 182              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 4
+
+
+ 183              		@ link register save eliminated.
+ 184 0000 104A     		ldr	r2, .L26
+ 185              	.L21:
+ 186 0002 10F8013B 		ldrb	r3, [r0], #1	@ zero_extendqisi2
+ 187 0006 9380     		strh	r3, [r2, #4]	@ movhi
+ 188              	.L20:
+ 189 0008 1388     		ldrh	r3, [r2]
+ 190 000a 13F0400F 		tst	r3, #64
+ 191 000e FBD0     		beq	.L20
+ 192 0010 1388     		ldrh	r3, [r2]
+ 193 0012 23F04003 		bic	r3, r3, #64
+ 194 0016 1B04     		lsls	r3, r3, #16
+ 195 0018 1B0C     		lsrs	r3, r3, #16
+ 196 001a 1380     		strh	r3, [r2]	@ movhi
+ 197 001c 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 198 001e 002B     		cmp	r3, #0
+ 199 0020 EFD1     		bne	.L21
+ 200 0022 084B     		ldr	r3, .L26
+ 201 0024 0A22     		movs	r2, #10
+ 202 0026 9A80     		strh	r2, [r3, #4]	@ movhi
+ 203 0028 1A46     		mov	r2, r3
+ 204              	.L22:
+ 205 002a 1388     		ldrh	r3, [r2]
+ 206 002c 13F0400F 		tst	r3, #64
+ 207 0030 FBD0     		beq	.L22
+ 208 0032 044A     		ldr	r2, .L26
+ 209 0034 1388     		ldrh	r3, [r2]
+ 210 0036 23F04003 		bic	r3, r3, #64
+ 211 003a 1B04     		lsls	r3, r3, #16
+ 212 003c 1B0C     		lsrs	r3, r3, #16
+ 213 003e 1380     		strh	r3, [r2]	@ movhi
+ 214 0040 7047     		bx	lr
+ 215              	.L27:
+ 216 0042 00BF     		.align	2
+ 217              	.L26:
+ 218 0044 00380140 		.word	1073821696
+ 220              		.section	.text.DefaultCommand,"ax",%progbits
+ 221              		.align	1
+ 222              		.global	DefaultCommand
+ 223              		.syntax unified
+ 224              		.thumb
+ 225              		.thumb_func
+ 226              		.fpu softvfp
+ 228              	DefaultCommand:
+ 229              		@ args = 0, pretend = 0, frame = 0
+ 230              		@ frame_needed = 0, uses_anonymous_args = 0
+ 231 0000 08B5     		push	{r3, lr}
+ 232 0002 054B     		ldr	r3, .L30
+ 233 0004 0122     		movs	r2, #1
+ 234 0006 9A70     		strb	r2, [r3, #2]
+ 235 0008 4FF6FF72 		movw	r2, #65535
+ 236 000c 1A80     		strh	r2, [r3]	@ movhi
+ 237 000e 0348     		ldr	r0, .L30+4
+ 238 0010 FFF7FEFF 		bl	SendMessage
+ 239 0014 08BD     		pop	{r3, pc}
+ 240              	.L31:
+ 241 0016 00BF     		.align	2
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 5
+
+
+ 242              	.L30:
+ 243 0018 00000000 		.word	DeviceConfiguration
+ 244 001c 00000000 		.word	.LC0
+ 246              		.section	.text.HelpCommand,"ax",%progbits
+ 247              		.align	1
+ 248              		.global	HelpCommand
+ 249              		.syntax unified
+ 250              		.thumb
+ 251              		.thumb_func
+ 252              		.fpu softvfp
+ 254              	HelpCommand:
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257 0000 08B5     		push	{r3, lr}
+ 258 0002 0B48     		ldr	r0, .L34
+ 259 0004 FFF7FEFF 		bl	SendMessage
+ 260 0008 0A48     		ldr	r0, .L34+4
+ 261 000a FFF7FEFF 		bl	SendMessage
+ 262 000e 0A48     		ldr	r0, .L34+8
+ 263 0010 FFF7FEFF 		bl	SendMessage
+ 264 0014 0948     		ldr	r0, .L34+12
+ 265 0016 FFF7FEFF 		bl	SendMessage
+ 266 001a 0948     		ldr	r0, .L34+16
+ 267 001c FFF7FEFF 		bl	SendMessage
+ 268 0020 0848     		ldr	r0, .L34+20
+ 269 0022 FFF7FEFF 		bl	SendMessage
+ 270 0026 0848     		ldr	r0, .L34+24
+ 271 0028 FFF7FEFF 		bl	SendMessage
+ 272 002c 08BD     		pop	{r3, pc}
+ 273              	.L35:
+ 274 002e 00BF     		.align	2
+ 275              	.L34:
+ 276 0030 00000000 		.word	.LC1
+ 277 0034 28000000 		.word	.LC2
+ 278 0038 44000000 		.word	.LC3
+ 279 003c 5C000000 		.word	.LC4
+ 280 0040 60000000 		.word	.LC5
+ 281 0044 7C000000 		.word	.LC6
+ 282 0048 B4000000 		.word	.LC7
+ 284              		.section	.text.ReadCommand,"ax",%progbits
+ 285              		.align	1
+ 286              		.global	ReadCommand
+ 287              		.syntax unified
+ 288              		.thumb
+ 289              		.thumb_func
+ 290              		.fpu softvfp
+ 292              	ReadCommand:
+ 293              		@ args = 0, pretend = 0, frame = 40
+ 294              		@ frame_needed = 0, uses_anonymous_args = 0
+ 295 0000 10B5     		push	{r4, lr}
+ 296 0002 8AB0     		sub	sp, sp, #40
+ 297 0004 2C48     		ldr	r0, .L38
+ 298 0006 FFF7FEFF 		bl	SendMessage
+ 299 000a 0121     		movs	r1, #1
+ 300 000c 2D20     		movs	r0, #45
+ 301 000e FFF7FEFF 		bl	IO_SetLine
+ 302 0012 0121     		movs	r1, #1
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 6
+
+
+ 303 0014 2E20     		movs	r0, #46
+ 304 0016 FFF7FEFF 		bl	IO_SetLine
+ 305 001a 0121     		movs	r1, #1
+ 306 001c 0720     		movs	r0, #7
+ 307 001e FFF7FEFF 		bl	IO_SetLine
+ 308 0022 0121     		movs	r1, #1
+ 309 0024 0620     		movs	r0, #6
+ 310 0026 FFF7FEFF 		bl	IO_SetLine
+ 311 002a 0121     		movs	r1, #1
+ 312 002c 2920     		movs	r0, #41
+ 313 002e FFF7FEFF 		bl	IO_SetLine
+ 314 0032 0121     		movs	r1, #1
+ 315 0034 2A20     		movs	r0, #42
+ 316 0036 FFF7FEFF 		bl	IO_SetLine
+ 317 003a FFF7FEFF 		bl	DataBusRead
+ 318 003e 1F4B     		ldr	r3, .L38+4
+ 319 0040 5A68     		ldr	r2, [r3, #4]
+ 320 0042 1F4B     		ldr	r3, .L38+8
+ 321 0044 DA60     		str	r2, [r3, #12]
+ 322 0046 0021     		movs	r1, #0
+ 323 0048 0720     		movs	r0, #7
+ 324 004a FFF7FEFF 		bl	IO_SetLine
+ 325 004e 0021     		movs	r1, #0
+ 326 0050 0620     		movs	r0, #6
+ 327 0052 FFF7FEFF 		bl	IO_SetLine
+ 328 0056 0021     		movs	r1, #0
+ 329 0058 2E20     		movs	r0, #46
+ 330 005a FFF7FEFF 		bl	IO_SetLine
+ 331 005e 0021     		movs	r1, #0
+ 332 0060 2920     		movs	r0, #41
+ 333 0062 FFF7FEFF 		bl	IO_SetLine
+ 334 0066 0021     		movs	r1, #0
+ 335 0068 2A20     		movs	r0, #42
+ 336 006a FFF7FEFF 		bl	IO_SetLine
+ 337 006e 154B     		ldr	r3, .L38+12
+ 338 0070 9C68     		ldr	r4, [r3, #8]
+ 339 0072 0121     		movs	r1, #1
+ 340 0074 0720     		movs	r0, #7
+ 341 0076 FFF7FEFF 		bl	IO_SetLine
+ 342 007a 0121     		movs	r1, #1
+ 343 007c 0620     		movs	r0, #6
+ 344 007e FFF7FEFF 		bl	IO_SetLine
+ 345 0082 0121     		movs	r1, #1
+ 346 0084 2920     		movs	r0, #41
+ 347 0086 FFF7FEFF 		bl	IO_SetLine
+ 348 008a 0121     		movs	r1, #1
+ 349 008c 2A20     		movs	r0, #42
+ 350 008e FFF7FEFF 		bl	IO_SetLine
+ 351 0092 0121     		movs	r1, #1
+ 352 0094 2E20     		movs	r0, #46
+ 353 0096 FFF7FEFF 		bl	IO_SetLine
+ 354 009a A3B2     		uxth	r3, r4
+ 355 009c 0A4A     		ldr	r2, .L38+16
+ 356 009e 2821     		movs	r1, #40
+ 357 00a0 6846     		mov	r0, sp
+ 358 00a2 FFF7FEFF 		bl	snprintf
+ 359 00a6 6846     		mov	r0, sp
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 7
+
+
+ 360 00a8 FFF7FEFF 		bl	SendMessage
+ 361 00ac 0748     		ldr	r0, .L38+20
+ 362 00ae FFF7FEFF 		bl	SendMessage
+ 363 00b2 0AB0     		add	sp, sp, #40
+ 364              		@ sp needed
+ 365 00b4 10BD     		pop	{r4, pc}
+ 366              	.L39:
+ 367 00b6 00BF     		.align	2
+ 368              	.L38:
+ 369 00b8 00000000 		.word	.LC8
+ 370 00bc 00000000 		.word	.LANCHOR0
+ 371 00c0 00140140 		.word	1073812480
+ 372 00c4 00180140 		.word	1073813504
+ 373 00c8 10000000 		.word	.LC9
+ 374 00cc 14000000 		.word	.LC10
+ 376              		.section	.text.WriteCommand,"ax",%progbits
+ 377              		.align	1
+ 378              		.global	WriteCommand
+ 379              		.syntax unified
+ 380              		.thumb
+ 381              		.thumb_func
+ 382              		.fpu softvfp
+ 384              	WriteCommand:
+ 385              		@ args = 0, pretend = 0, frame = 0
+ 386              		@ frame_needed = 0, uses_anonymous_args = 0
+ 387 0000 08B5     		push	{r3, lr}
+ 388 0002 2548     		ldr	r0, .L42
+ 389 0004 FFF7FEFF 		bl	SendMessage
+ 390 0008 0121     		movs	r1, #1
+ 391 000a 2E20     		movs	r0, #46
+ 392 000c FFF7FEFF 		bl	IO_SetLine
+ 393 0010 0121     		movs	r1, #1
+ 394 0012 2D20     		movs	r0, #45
+ 395 0014 FFF7FEFF 		bl	IO_SetLine
+ 396 0018 0121     		movs	r1, #1
+ 397 001a 2920     		movs	r0, #41
+ 398 001c FFF7FEFF 		bl	IO_SetLine
+ 399 0020 0121     		movs	r1, #1
+ 400 0022 2A20     		movs	r0, #42
+ 401 0024 FFF7FEFF 		bl	IO_SetLine
+ 402 0028 FFF7FEFF 		bl	DataBusWrite
+ 403 002c 1B4B     		ldr	r3, .L42+4
+ 404 002e 5968     		ldr	r1, [r3, #4]
+ 405 0030 1B4A     		ldr	r2, .L42+8
+ 406 0032 D160     		str	r1, [r2, #12]
+ 407 0034 9A8A     		ldrh	r2, [r3, #20]
+ 408 0036 1B4B     		ldr	r3, .L42+12
+ 409 0038 DA60     		str	r2, [r3, #12]
+ 410 003a 0021     		movs	r1, #0
+ 411 003c 0720     		movs	r0, #7
+ 412 003e FFF7FEFF 		bl	IO_SetLine
+ 413 0042 0021     		movs	r1, #0
+ 414 0044 0620     		movs	r0, #6
+ 415 0046 FFF7FEFF 		bl	IO_SetLine
+ 416 004a 0021     		movs	r1, #0
+ 417 004c 2920     		movs	r0, #41
+ 418 004e FFF7FEFF 		bl	IO_SetLine
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 8
+
+
+ 419 0052 0021     		movs	r1, #0
+ 420 0054 2A20     		movs	r0, #42
+ 421 0056 FFF7FEFF 		bl	IO_SetLine
+ 422 005a 0021     		movs	r1, #0
+ 423 005c 2D20     		movs	r0, #45
+ 424 005e FFF7FEFF 		bl	IO_SetLine
+ 425 0062 0121     		movs	r1, #1
+ 426 0064 2D20     		movs	r0, #45
+ 427 0066 FFF7FEFF 		bl	IO_SetLine
+ 428 006a 0121     		movs	r1, #1
+ 429 006c 0720     		movs	r0, #7
+ 430 006e FFF7FEFF 		bl	IO_SetLine
+ 431 0072 0121     		movs	r1, #1
+ 432 0074 0620     		movs	r0, #6
+ 433 0076 FFF7FEFF 		bl	IO_SetLine
+ 434 007a 0121     		movs	r1, #1
+ 435 007c 2920     		movs	r0, #41
+ 436 007e FFF7FEFF 		bl	IO_SetLine
+ 437 0082 0121     		movs	r1, #1
+ 438 0084 2A20     		movs	r0, #42
+ 439 0086 FFF7FEFF 		bl	IO_SetLine
+ 440 008a 0748     		ldr	r0, .L42+16
+ 441 008c FFF7FEFF 		bl	SendMessage
+ 442 0090 FFF7FEFF 		bl	ReadCommand
+ 443 0094 08BD     		pop	{r3, pc}
+ 444              	.L43:
+ 445 0096 00BF     		.align	2
+ 446              	.L42:
+ 447 0098 00000000 		.word	.LC11
+ 448 009c 00000000 		.word	.LANCHOR0
+ 449 00a0 00140140 		.word	1073812480
+ 450 00a4 00180140 		.word	1073813504
+ 451 00a8 10000000 		.word	.LC12
+ 453              		.section	.text.taskExecCommand,"ax",%progbits
+ 454              		.align	1
+ 455              		.global	taskExecCommand
+ 456              		.syntax unified
+ 457              		.thumb
+ 458              		.thumb_func
+ 459              		.fpu softvfp
+ 461              	taskExecCommand:
+ 462              		@ args = 0, pretend = 0, frame = 0
+ 463              		@ frame_needed = 0, uses_anonymous_args = 0
+ 464 0000 144B     		ldr	r3, .L58
+ 465 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 466 0004 2BB3     		cbz	r3, .L53
+ 467 0006 10B5     		push	{r4, lr}
+ 468 0008 012B     		cmp	r3, #1
+ 469 000a 06D0     		beq	.L56
+ 470 000c 022B     		cmp	r3, #2
+ 471 000e 12D0     		beq	.L57
+ 472              	.L47:
+ 473 0010 FFF7FEFF 		bl	copyCCtoLC
+ 474 0014 FFF7FEFF 		bl	resetCC
+ 475 0018 10BD     		pop	{r4, pc}
+ 476              	.L56:
+ 477 001a 0E4B     		ldr	r3, .L58
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 9
+
+
+ 478 001c DB8A     		ldrh	r3, [r3, #22]
+ 479 001e 002B     		cmp	r3, #0
+ 480 0020 F6D0     		beq	.L47
+ 481 0022 0C4C     		ldr	r4, .L58
+ 482              	.L48:
+ 483 0024 FFF7FEFF 		bl	WriteCommand
+ 484 0028 E38A     		ldrh	r3, [r4, #22]
+ 485 002a 013B     		subs	r3, r3, #1
+ 486 002c 9BB2     		uxth	r3, r3
+ 487 002e E382     		strh	r3, [r4, #22]	@ movhi
+ 488 0030 002B     		cmp	r3, #0
+ 489 0032 F7D1     		bne	.L48
+ 490 0034 ECE7     		b	.L47
+ 491              	.L57:
+ 492 0036 074B     		ldr	r3, .L58
+ 493 0038 DB8A     		ldrh	r3, [r3, #22]
+ 494 003a 002B     		cmp	r3, #0
+ 495 003c E8D0     		beq	.L47
+ 496 003e 054C     		ldr	r4, .L58
+ 497              	.L49:
+ 498 0040 FFF7FEFF 		bl	ReadCommand
+ 499 0044 E38A     		ldrh	r3, [r4, #22]
+ 500 0046 013B     		subs	r3, r3, #1
+ 501 0048 9BB2     		uxth	r3, r3
+ 502 004a E382     		strh	r3, [r4, #22]	@ movhi
+ 503 004c 002B     		cmp	r3, #0
+ 504 004e F7D1     		bne	.L49
+ 505 0050 DEE7     		b	.L47
+ 506              	.L53:
+ 507 0052 7047     		bx	lr
+ 508              	.L59:
+ 509              		.align	2
+ 510              	.L58:
+ 511 0054 00000000 		.word	.LANCHOR0
+ 513              		.section	.text.errorType,"ax",%progbits
+ 514              		.align	1
+ 515              		.global	errorType
+ 516              		.syntax unified
+ 517              		.thumb
+ 518              		.thumb_func
+ 519              		.fpu softvfp
+ 521              	errorType:
+ 522              		@ args = 0, pretend = 0, frame = 0
+ 523              		@ frame_needed = 0, uses_anonymous_args = 0
+ 524 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 525 0002 0A28     		cmp	r0, #10
+ 526 0004 3FD8     		bhi	.L61
+ 527 0006 DFE800F0 		tbb	[pc, r0]
+ 528              	.L63:
+ 529 000a 06       		.byte	(.L73-.L63)/2
+ 530 000b 16       		.byte	(.L72-.L63)/2
+ 531 000c 1A       		.byte	(.L71-.L63)/2
+ 532 000d 1E       		.byte	(.L70-.L63)/2
+ 533 000e 22       		.byte	(.L69-.L63)/2
+ 534 000f 26       		.byte	(.L68-.L63)/2
+ 535 0010 2A       		.byte	(.L67-.L63)/2
+ 536 0011 2E       		.byte	(.L66-.L63)/2
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 10
+
+
+ 537 0012 32       		.byte	(.L65-.L63)/2
+ 538 0013 36       		.byte	(.L64-.L63)/2
+ 539 0014 3A       		.byte	(.L62-.L63)/2
+ 540 0015 00       		.p2align 1
+ 541              	.L73:
+ 542 0016 1E4D     		ldr	r5, .L76
+ 543 0018 2846     		mov	r0, r5
+ 544 001a FFF7FEFF 		bl	strlen
+ 545 001e 0746     		mov	r7, r0
+ 546 0020 4619     		adds	r6, r0, r5
+ 547 0022 1C4C     		ldr	r4, .L76+4
+ 548 0024 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+ 549 0026 7851     		str	r0, [r7, r5]	@ unaligned
+ 550 0028 7160     		str	r1, [r6, #4]	@ unaligned
+ 551 002a B260     		str	r2, [r6, #8]	@ unaligned
+ 552 002c F360     		str	r3, [r6, #12]	@ unaligned
+ 553 002e 2846     		mov	r0, r5
+ 554 0030 FFF7FEFF 		bl	SendMessage
+ 555              	.L60:
+ 556 0034 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 557              	.L72:
+ 558 0036 1848     		ldr	r0, .L76+8
+ 559 0038 FFF7FEFF 		bl	SendMessage
+ 560 003c FAE7     		b	.L60
+ 561              	.L71:
+ 562 003e 1748     		ldr	r0, .L76+12
+ 563 0040 FFF7FEFF 		bl	SendMessage
+ 564 0044 F6E7     		b	.L60
+ 565              	.L70:
+ 566 0046 1648     		ldr	r0, .L76+16
+ 567 0048 FFF7FEFF 		bl	SendMessage
+ 568 004c F2E7     		b	.L60
+ 569              	.L69:
+ 570 004e 1548     		ldr	r0, .L76+20
+ 571 0050 FFF7FEFF 		bl	SendMessage
+ 572 0054 EEE7     		b	.L60
+ 573              	.L68:
+ 574 0056 1448     		ldr	r0, .L76+24
+ 575 0058 FFF7FEFF 		bl	SendMessage
+ 576 005c EAE7     		b	.L60
+ 577              	.L67:
+ 578 005e 1348     		ldr	r0, .L76+28
+ 579 0060 FFF7FEFF 		bl	SendMessage
+ 580 0064 E6E7     		b	.L60
+ 581              	.L66:
+ 582 0066 1248     		ldr	r0, .L76+32
+ 583 0068 FFF7FEFF 		bl	SendMessage
+ 584 006c E2E7     		b	.L60
+ 585              	.L65:
+ 586 006e 1148     		ldr	r0, .L76+36
+ 587 0070 FFF7FEFF 		bl	SendMessage
+ 588 0074 DEE7     		b	.L60
+ 589              	.L64:
+ 590 0076 1048     		ldr	r0, .L76+40
+ 591 0078 FFF7FEFF 		bl	SendMessage
+ 592 007c DAE7     		b	.L60
+ 593              	.L62:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 11
+
+
+ 594 007e 0F48     		ldr	r0, .L76+44
+ 595 0080 FFF7FEFF 		bl	SendMessage
+ 596 0084 D6E7     		b	.L60
+ 597              	.L61:
+ 598 0086 0E48     		ldr	r0, .L76+48
+ 599 0088 FFF7FEFF 		bl	printf
+ 600 008c D2E7     		b	.L60
+ 601              	.L77:
+ 602 008e 00BF     		.align	2
+ 603              	.L76:
+ 604 0090 00000000 		.word	recieved
+ 605 0094 00000000 		.word	.LC13
+ 606 0098 10000000 		.word	.LC14
+ 607 009c 24000000 		.word	.LC15
+ 608 00a0 3C000000 		.word	.LC16
+ 609 00a4 58000000 		.word	.LC17
+ 610 00a8 7C000000 		.word	.LC18
+ 611 00ac A0000000 		.word	.LC19
+ 612 00b0 BC000000 		.word	.LC20
+ 613 00b4 D8000000 		.word	.LC21
+ 614 00b8 F8000000 		.word	.LC22
+ 615 00bc 28010000 		.word	.LC23
+ 616 00c0 38010000 		.word	.LC24
+ 618              		.section	.text.SaveCommand,"ax",%progbits
+ 619              		.align	1
+ 620              		.global	SaveCommand
+ 621              		.syntax unified
+ 622              		.thumb
+ 623              		.thumb_func
+ 624              		.fpu softvfp
+ 626              	SaveCommand:
+ 627              		@ args = 0, pretend = 0, frame = 0
+ 628              		@ frame_needed = 0, uses_anonymous_args = 0
+ 629 0000 38B5     		push	{r3, r4, r5, lr}
+ 630 0002 0D4B     		ldr	r3, .L80
+ 631 0004 1D68     		ldr	r5, [r3]
+ 632 0006 FFF7FEFF 		bl	flash_unlock
+ 633 000a 0C4C     		ldr	r4, .L80+4
+ 634 000c 2046     		mov	r0, r4
+ 635 000e FFF7FEFF 		bl	flash_erase_page
+ 636 0012 0B49     		ldr	r1, .L80+8
+ 637 0014 2046     		mov	r0, r4
+ 638 0016 FFF7FEFF 		bl	flash_write
+ 639 001a 691C     		adds	r1, r5, #1
+ 640 001c 0948     		ldr	r0, .L80+12
+ 641 001e FFF7FEFF 		bl	flash_write
+ 642 0022 094B     		ldr	r3, .L80+16
+ 643 0024 1968     		ldr	r1, [r3]	@ unaligned
+ 644 0026 0948     		ldr	r0, .L80+20
+ 645 0028 FFF7FEFF 		bl	flash_write
+ 646 002c FFF7FEFF 		bl	flash_lock
+ 647 0030 0748     		ldr	r0, .L80+24
+ 648 0032 FFF7FEFF 		bl	SendMessage
+ 649 0036 38BD     		pop	{r3, r4, r5, pc}
+ 650              	.L81:
+ 651              		.align	2
+ 652              	.L80:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 12
+
+
+ 653 0038 00000000 		.word	FlashControl
+ 654 003c 00F00008 		.word	134279168
+ 655 0040 5B138F24 		.word	613356379
+ 656 0044 04F00008 		.word	134279172
+ 657 0048 00000000 		.word	DeviceConfiguration
+ 658 004c 08F00008 		.word	134279176
+ 659 0050 00000000 		.word	.LC25
+ 661              		.section	.text.initDeviceConfig,"ax",%progbits
+ 662              		.align	1
+ 663              		.global	initDeviceConfig
+ 664              		.syntax unified
+ 665              		.thumb
+ 666              		.thumb_func
+ 667              		.fpu softvfp
+ 669              	initDeviceConfig:
+ 670              		@ args = 0, pretend = 0, frame = 0
+ 671              		@ frame_needed = 0, uses_anonymous_args = 0
+ 672 0000 08B5     		push	{r3, lr}
+ 673 0002 144B     		ldr	r3, .L91
+ 674 0004 1968     		ldr	r1, [r3]
+ 675 0006 144A     		ldr	r2, .L91+4
+ 676 0008 5160     		str	r1, [r2, #4]
+ 677 000a 0433     		adds	r3, r3, #4
+ 678 000c 1B68     		ldr	r3, [r3]
+ 679 000e 1360     		str	r3, [r2]
+ 680 0010 B3F1FF3F 		cmp	r3, #-1
+ 681 0014 02D0     		beq	.L83
+ 682 0016 114B     		ldr	r3, .L91+8
+ 683 0018 9942     		cmp	r1, r3
+ 684 001a 02D0     		beq	.L90
+ 685              	.L83:
+ 686 001c FFF7FEFF 		bl	DefaultCommand
+ 687              	.L82:
+ 688 0020 08BD     		pop	{r3, pc}
+ 689              	.L90:
+ 690 0022 0F4B     		ldr	r3, .L91+12
+ 691 0024 0F4A     		ldr	r2, .L91+16
+ 692 0026 1068     		ldr	r0, [r2]
+ 693 0028 1860     		str	r0, [r3]	@ unaligned
+ 694 002a 1B88     		ldrh	r3, [r3]
+ 695 002c FF2B     		cmp	r3, #255
+ 696 002e 0CBF     		ite	eq
+ 697 0030 0D48     		ldreq	r0, .L91+20
+ 698 0032 0E48     		ldrne	r0, .L91+24
+ 699 0034 FFF7FEFF 		bl	SendMessage
+ 700 0038 094B     		ldr	r3, .L91+12
+ 701 003a 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 702 003c 33B9     		cbnz	r3, .L86
+ 703 003e 0C48     		ldr	r0, .L91+28
+ 704 0040 FFF7FEFF 		bl	SendMessage
+ 705              	.L87:
+ 706 0044 0B48     		ldr	r0, .L91+32
+ 707 0046 FFF7FEFF 		bl	SendMessage
+ 708 004a E9E7     		b	.L82
+ 709              	.L86:
+ 710 004c 0A48     		ldr	r0, .L91+36
+ 711 004e FFF7FEFF 		bl	SendMessage
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 13
+
+
+ 712 0052 F7E7     		b	.L87
+ 713              	.L92:
+ 714              		.align	2
+ 715              	.L91:
+ 716 0054 00F00008 		.word	134279168
+ 717 0058 00000000 		.word	FlashControl
+ 718 005c 5B138F24 		.word	613356379
+ 719 0060 00000000 		.word	DeviceConfiguration
+ 720 0064 08F00008 		.word	134279176
+ 721 0068 00000000 		.word	.LC26
+ 722 006c 0C000000 		.word	.LC27
+ 723 0070 18000000 		.word	.LC28
+ 724 0074 38000000 		.word	.LC30
+ 725 0078 28000000 		.word	.LC29
+ 727              		.section	.text.parseUARTMessage,"ax",%progbits
+ 728              		.align	1
+ 729              		.global	parseUARTMessage
+ 730              		.syntax unified
+ 731              		.thumb
+ 732              		.thumb_func
+ 733              		.fpu softvfp
+ 735              	parseUARTMessage:
+ 736              		@ args = 0, pretend = 0, frame = 0
+ 737              		@ frame_needed = 0, uses_anonymous_args = 0
+ 738 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 739 0002 B149     		ldr	r1, .L188
+ 740 0004 FFF7FEFF 		bl	strtok
+ 741 0008 B04B     		ldr	r3, .L188+4
+ 742 000a 1860     		str	r0, [r3]
+ 743 000c 0028     		cmp	r0, #0
+ 744 000e 00F02483 		beq	.L122
+ 745 0012 0446     		mov	r4, r0
+ 746 0014 FFF7FEFF 		bl	strlen
+ 747 0018 0546     		mov	r5, r0
+ 748 001a 0246     		mov	r2, r0
+ 749 001c AC49     		ldr	r1, .L188+8
+ 750 001e 2046     		mov	r0, r4
+ 751 0020 FFF7FEFF 		bl	strncmp
+ 752 0024 28B1     		cbz	r0, .L95
+ 753 0026 2A46     		mov	r2, r5
+ 754 0028 AA49     		ldr	r1, .L188+12
+ 755 002a 2046     		mov	r0, r4
+ 756 002c FFF7FEFF 		bl	strncmp
+ 757 0030 08B9     		cbnz	r0, .L96
+ 758              	.L95:
+ 759 0032 032D     		cmp	r5, #3
+ 760 0034 43D0     		beq	.L162
+ 761              	.L96:
+ 762 0036 0322     		movs	r2, #3
+ 763 0038 A749     		ldr	r1, .L188+16
+ 764 003a 2046     		mov	r0, r4
+ 765 003c FFF7FEFF 		bl	strncmp
+ 766 0040 38B1     		cbz	r0, .L99
+ 767 0042 0322     		movs	r2, #3
+ 768 0044 A549     		ldr	r1, .L188+20
+ 769 0046 2046     		mov	r0, r4
+ 770 0048 FFF7FEFF 		bl	strncmp
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 14
+
+
+ 771 004c 0028     		cmp	r0, #0
+ 772 004e 40F0FA80 		bne	.L100
+ 773              	.L99:
+ 774 0052 032D     		cmp	r5, #3
+ 775 0054 00F0A980 		beq	.L163
+ 776 0058 2A46     		mov	r2, r5
+ 777 005a A149     		ldr	r1, .L188+24
+ 778 005c 2046     		mov	r0, r4
+ 779 005e FFF7FEFF 		bl	strncmp
+ 780 0062 50B1     		cbz	r0, .L106
+ 781              	.L121:
+ 782 0064 2A46     		mov	r2, r5
+ 783 0066 9F49     		ldr	r1, .L188+28
+ 784 0068 2046     		mov	r0, r4
+ 785 006a FFF7FEFF 		bl	strncmp
+ 786 006e 0028     		cmp	r0, #0
+ 787 0070 40F0B381 		bne	.L105
+ 788              	.L104:
+ 789 0074 032D     		cmp	r5, #3
+ 790 0076 00F0EF80 		beq	.L164
+ 791              	.L106:
+ 792 007a 2A46     		mov	r2, r5
+ 793 007c 9A49     		ldr	r1, .L188+32
+ 794 007e 2046     		mov	r0, r4
+ 795 0080 FFF7FEFF 		bl	strncmp
+ 796 0084 0028     		cmp	r0, #0
+ 797 0086 40F08382 		bne	.L112
+ 798 008a 042D     		cmp	r5, #4
+ 799 008c 00F03C82 		beq	.L165
+ 800 0090 2A46     		mov	r2, r5
+ 801 0092 9649     		ldr	r1, .L188+36
+ 802 0094 2046     		mov	r0, r4
+ 803 0096 FFF7FEFF 		bl	strncmp
+ 804 009a 0028     		cmp	r0, #0
+ 805 009c 00F08282 		beq	.L115
+ 806              	.L114:
+ 807 00a0 2A46     		mov	r2, r5
+ 808 00a2 9349     		ldr	r1, .L188+40
+ 809 00a4 2046     		mov	r0, r4
+ 810 00a6 FFF7FEFF 		bl	strncmp
+ 811 00aa 0028     		cmp	r0, #0
+ 812 00ac 40F07A82 		bne	.L115
+ 813 00b0 042D     		cmp	r5, #4
+ 814 00b2 40F07782 		bne	.L115
+ 815 00b6 FFF7FEFF 		bl	HelpCommand
+ 816 00ba 0024     		movs	r4, #0
+ 817 00bc CEE2     		b	.L94
+ 818              	.L162:
+ 819 00be 8D49     		ldr	r1, .L188+44
+ 820 00c0 0020     		movs	r0, #0
+ 821 00c2 FFF7FEFF 		bl	strtok
+ 822 00c6 0446     		mov	r4, r0
+ 823 00c8 8B49     		ldr	r1, .L188+48
+ 824 00ca 0020     		movs	r0, #0
+ 825 00cc FFF7FEFF 		bl	strtok
+ 826 00d0 0546     		mov	r5, r0
+ 827 00d2 7E4B     		ldr	r3, .L188+4
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 15
+
+
+ 828 00d4 5C60     		str	r4, [r3, #4]
+ 829 00d6 5861     		str	r0, [r3, #20]
+ 830 00d8 002C     		cmp	r4, #0
+ 831 00da 00F0C382 		beq	.L123
+ 832 00de 0028     		cmp	r0, #0
+ 833 00e0 00F0C282 		beq	.L124
+ 834 00e4 2046     		mov	r0, r4
+ 835 00e6 FFF7FEFF 		bl	strlen
+ 836 00ea 0646     		mov	r6, r0
+ 837 00ec 2846     		mov	r0, r5
+ 838 00ee FFF7FEFF 		bl	strlen
+ 839 00f2 0546     		mov	r5, r0
+ 840 00f4 3146     		mov	r1, r6
+ 841 00f6 2046     		mov	r0, r4
+ 842 00f8 FFF7FEFF 		bl	checkHexFormat
+ 843 00fc 08B1     		cbz	r0, .L166
+ 844 00fe 0424     		movs	r4, #4
+ 845 0100 ACE2     		b	.L94
+ 846              	.L166:
+ 847 0102 2946     		mov	r1, r5
+ 848 0104 714B     		ldr	r3, .L188+4
+ 849 0106 5869     		ldr	r0, [r3, #20]
+ 850 0108 FFF7FEFF 		bl	checkHexFormat
+ 851 010c 08B1     		cbz	r0, .L167
+ 852 010e 0424     		movs	r4, #4
+ 853 0110 A4E2     		b	.L94
+ 854              	.L167:
+ 855 0112 1022     		movs	r2, #16
+ 856 0114 0021     		movs	r1, #0
+ 857 0116 6D4B     		ldr	r3, .L188+4
+ 858 0118 5868     		ldr	r0, [r3, #4]
+ 859 011a FFF7FEFF 		bl	strtol
+ 860 011e 6FF07F41 		mvn	r1, #-16777216
+ 861 0122 FFF7FEFF 		bl	checkRange
+ 862 0126 08B1     		cbz	r0, .L168
+ 863 0128 0224     		movs	r4, #2
+ 864 012a 97E2     		b	.L94
+ 865              	.L168:
+ 866 012c 1022     		movs	r2, #16
+ 867 012e 0021     		movs	r1, #0
+ 868 0130 664B     		ldr	r3, .L188+4
+ 869 0132 5869     		ldr	r0, [r3, #20]
+ 870 0134 FFF7FEFF 		bl	strtol
+ 871 0138 704B     		ldr	r3, .L188+52
+ 872 013a 1988     		ldrh	r1, [r3]
+ 873 013c FFF7FEFF 		bl	checkRange
+ 874 0140 0446     		mov	r4, r0
+ 875 0142 0028     		cmp	r0, #0
+ 876 0144 40F09282 		bne	.L128
+ 877 0148 6C4B     		ldr	r3, .L188+52
+ 878 014a 1A88     		ldrh	r2, [r3]
+ 879 014c 4FF6FF73 		movw	r3, #65535
+ 880 0150 9A42     		cmp	r2, r3
+ 881 0152 1ED0     		beq	.L169
+ 882              	.L97:
+ 883 0154 6A4D     		ldr	r5, .L188+56
+ 884 0156 0127     		movs	r7, #1
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 16
+
+
+ 885 0158 2F70     		strb	r7, [r5]
+ 886 015a 5C4E     		ldr	r6, .L188+4
+ 887 015c 1022     		movs	r2, #16
+ 888 015e 0021     		movs	r1, #0
+ 889 0160 7068     		ldr	r0, [r6, #4]
+ 890 0162 FFF7FEFF 		bl	strtol
+ 891 0166 6860     		str	r0, [r5, #4]
+ 892 0168 1022     		movs	r2, #16
+ 893 016a 0021     		movs	r1, #0
+ 894 016c 7069     		ldr	r0, [r6, #20]
+ 895 016e FFF7FEFF 		bl	strtol
+ 896 0172 A882     		strh	r0, [r5, #20]	@ movhi
+ 897 0174 0023     		movs	r3, #0
+ 898 0176 AB60     		str	r3, [r5, #8]
+ 899 0178 EB60     		str	r3, [r5, #12]
+ 900 017a 2B61     		str	r3, [r5, #16]
+ 901 017c EF82     		strh	r7, [r5, #22]	@ movhi
+ 902 017e 3268     		ldr	r2, [r6]
+ 903 0180 534B     		ldr	r3, .L188+8
+ 904 0182 9A42     		cmp	r2, r3
+ 905 0184 07BF     		ittee	eq
+ 906 0186 2B46     		moveq	r3, r5
+ 907 0188 3A46     		moveq	r2, r7
+ 908 018a 5D4B     		ldrne	r3, .L188+56
+ 909 018c 0222     		movne	r2, #2
+ 910 018e 5A70     		strb	r2, [r3, #1]
+ 911 0190 64E2     		b	.L94
+ 912              	.L169:
+ 913 0192 1022     		movs	r2, #16
+ 914 0194 0021     		movs	r1, #0
+ 915 0196 4D4B     		ldr	r3, .L188+4
+ 916 0198 5868     		ldr	r0, [r3, #4]
+ 917 019a FFF7FEFF 		bl	strtol
+ 918 019e FFF7FEFF 		bl	checkParity
+ 919 01a2 0028     		cmp	r0, #0
+ 920 01a4 D6D0     		beq	.L97
+ 921 01a6 0324     		movs	r4, #3
+ 922 01a8 58E2     		b	.L94
+ 923              	.L163:
+ 924 01aa 5349     		ldr	r1, .L188+48
+ 925 01ac 0020     		movs	r0, #0
+ 926 01ae FFF7FEFF 		bl	strtok
+ 927 01b2 0446     		mov	r4, r0
+ 928 01b4 454B     		ldr	r3, .L188+4
+ 929 01b6 5860     		str	r0, [r3, #4]
+ 930 01b8 0028     		cmp	r0, #0
+ 931 01ba 00F05982 		beq	.L130
+ 932 01be FFF7FEFF 		bl	strlen
+ 933 01c2 0146     		mov	r1, r0
+ 934 01c4 2046     		mov	r0, r4
+ 935 01c6 FFF7FEFF 		bl	checkHexFormat
+ 936 01ca 08B1     		cbz	r0, .L170
+ 937 01cc 0624     		movs	r4, #6
+ 938 01ce 45E2     		b	.L94
+ 939              	.L170:
+ 940 01d0 1022     		movs	r2, #16
+ 941 01d2 0021     		movs	r1, #0
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 17
+
+
+ 942 01d4 3D4B     		ldr	r3, .L188+4
+ 943 01d6 5868     		ldr	r0, [r3, #4]
+ 944 01d8 FFF7FEFF 		bl	strtol
+ 945 01dc 6FF07F41 		mvn	r1, #-16777216
+ 946 01e0 FFF7FEFF 		bl	checkRange
+ 947 01e4 0446     		mov	r4, r0
+ 948 01e6 0028     		cmp	r0, #0
+ 949 01e8 40F04482 		bne	.L132
+ 950 01ec 434B     		ldr	r3, .L188+52
+ 951 01ee 1A88     		ldrh	r2, [r3]
+ 952 01f0 4FF6FF73 		movw	r3, #65535
+ 953 01f4 9A42     		cmp	r2, r3
+ 954 01f6 1AD0     		beq	.L171
+ 955              	.L102:
+ 956 01f8 414D     		ldr	r5, .L188+56
+ 957 01fa 0223     		movs	r3, #2
+ 958 01fc 2B70     		strb	r3, [r5]
+ 959 01fe 334E     		ldr	r6, .L188+4
+ 960 0200 1022     		movs	r2, #16
+ 961 0202 0021     		movs	r1, #0
+ 962 0204 7068     		ldr	r0, [r6, #4]
+ 963 0206 FFF7FEFF 		bl	strtol
+ 964 020a 6860     		str	r0, [r5, #4]
+ 965 020c 0023     		movs	r3, #0
+ 966 020e AB82     		strh	r3, [r5, #20]	@ movhi
+ 967 0210 AB60     		str	r3, [r5, #8]
+ 968 0212 EB60     		str	r3, [r5, #12]
+ 969 0214 2B61     		str	r3, [r5, #16]
+ 970 0216 0123     		movs	r3, #1
+ 971 0218 EB82     		strh	r3, [r5, #22]	@ movhi
+ 972 021a 3268     		ldr	r2, [r6]
+ 973 021c 2E4B     		ldr	r3, .L188+16
+ 974 021e 9A42     		cmp	r2, r3
+ 975 0220 07BF     		ittee	eq
+ 976 0222 2B46     		moveq	r3, r5
+ 977 0224 0122     		moveq	r2, #1
+ 978 0226 364B     		ldrne	r3, .L188+56
+ 979 0228 0222     		movne	r2, #2
+ 980 022a 5A70     		strb	r2, [r3, #1]
+ 981 022c 16E2     		b	.L94
+ 982              	.L171:
+ 983 022e 1022     		movs	r2, #16
+ 984 0230 0021     		movs	r1, #0
+ 985 0232 264B     		ldr	r3, .L188+4
+ 986 0234 5868     		ldr	r0, [r3, #4]
+ 987 0236 FFF7FEFF 		bl	strtol
+ 988 023a FFF7FEFF 		bl	checkParity
+ 989 023e 0028     		cmp	r0, #0
+ 990 0240 DAD0     		beq	.L102
+ 991 0242 0324     		movs	r4, #3
+ 992 0244 0AE2     		b	.L94
+ 993              	.L100:
+ 994 0246 2A46     		mov	r2, r5
+ 995 0248 2549     		ldr	r1, .L188+24
+ 996 024a 2046     		mov	r0, r4
+ 997 024c FFF7FEFF 		bl	strncmp
+ 998 0250 0028     		cmp	r0, #0
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 18
+
+
+ 999 0252 3FF40FAF 		beq	.L104
+ 1000 0256 05E7     		b	.L121
+ 1001              	.L164:
+ 1002 0258 2A49     		ldr	r1, .L188+60
+ 1003 025a 0020     		movs	r0, #0
+ 1004 025c FFF7FEFF 		bl	strtok
+ 1005 0260 0446     		mov	r4, r0
+ 1006 0262 2449     		ldr	r1, .L188+44
+ 1007 0264 0020     		movs	r0, #0
+ 1008 0266 FFF7FEFF 		bl	strtok
+ 1009 026a 0546     		mov	r5, r0
+ 1010 026c 2249     		ldr	r1, .L188+48
+ 1011 026e 0020     		movs	r0, #0
+ 1012 0270 FFF7FEFF 		bl	strtok
+ 1013 0274 0646     		mov	r6, r0
+ 1014 0276 154B     		ldr	r3, .L188+4
+ 1015 0278 9C60     		str	r4, [r3, #8]
+ 1016 027a DD60     		str	r5, [r3, #12]
+ 1017 027c 9861     		str	r0, [r3, #24]
+ 1018 027e 002C     		cmp	r4, #0
+ 1019 0280 00F0FA81 		beq	.L134
+ 1020 0284 002D     		cmp	r5, #0
+ 1021 0286 00F0F981 		beq	.L135
+ 1022 028a 0028     		cmp	r0, #0
+ 1023 028c 00F0F881 		beq	.L136
+ 1024 0290 2046     		mov	r0, r4
+ 1025 0292 FFF7FEFF 		bl	strlen
+ 1026 0296 0746     		mov	r7, r0
+ 1027 0298 2846     		mov	r0, r5
+ 1028 029a FFF7FEFF 		bl	strlen
+ 1029 029e 0546     		mov	r5, r0
+ 1030 02a0 3046     		mov	r0, r6
+ 1031 02a2 FFF7FEFF 		bl	strlen
+ 1032 02a6 0646     		mov	r6, r0
+ 1033 02a8 3946     		mov	r1, r7
+ 1034 02aa 2046     		mov	r0, r4
+ 1035 02ac FFF7FEFF 		bl	checkHexFormat
+ 1036 02b0 08B1     		cbz	r0, .L172
+ 1037 02b2 0624     		movs	r4, #6
+ 1038 02b4 D2E1     		b	.L94
+ 1039              	.L172:
+ 1040 02b6 2946     		mov	r1, r5
+ 1041 02b8 044B     		ldr	r3, .L188+4
+ 1042 02ba D868     		ldr	r0, [r3, #12]
+ 1043 02bc FFF7FEFF 		bl	checkHexFormat
+ 1044 02c0 10B3     		cbz	r0, .L173
+ 1045 02c2 0624     		movs	r4, #6
+ 1046 02c4 CAE1     		b	.L94
+ 1047              	.L189:
+ 1048 02c6 00BF     		.align	2
+ 1049              	.L188:
+ 1050 02c8 00000000 		.word	.LC31
+ 1051 02cc 00000000 		.word	UART_Message
+ 1052 02d0 04000000 		.word	.LC32
+ 1053 02d4 08000000 		.word	.LC33
+ 1054 02d8 14000000 		.word	.LC36
+ 1055 02dc 18000000 		.word	.LC37
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 19
+
+
+ 1056 02e0 1C000000 		.word	.LC38
+ 1057 02e4 20000000 		.word	.LC39
+ 1058 02e8 30000000 		.word	.LC43
+ 1059 02ec 38000000 		.word	.LC44
+ 1060 02f0 40000000 		.word	.LC45
+ 1061 02f4 0C000000 		.word	.LC34
+ 1062 02f8 10000000 		.word	.LC35
+ 1063 02fc 00000000 		.word	DeviceConfiguration
+ 1064 0300 00000000 		.word	.LANCHOR0
+ 1065 0304 24000000 		.word	.LC40
+ 1066              	.L173:
+ 1067 0308 3146     		mov	r1, r6
+ 1068 030a 984B     		ldr	r3, .L190
+ 1069 030c 9869     		ldr	r0, [r3, #24]
+ 1070 030e FFF7FEFF 		bl	checkHexFormat
+ 1071 0312 08B1     		cbz	r0, .L174
+ 1072 0314 0624     		movs	r4, #6
+ 1073 0316 A1E1     		b	.L94
+ 1074              	.L174:
+ 1075 0318 944C     		ldr	r4, .L190
+ 1076 031a 1022     		movs	r2, #16
+ 1077 031c 0021     		movs	r1, #0
+ 1078 031e A068     		ldr	r0, [r4, #8]
+ 1079 0320 FFF7FEFF 		bl	strtol
+ 1080 0324 0546     		mov	r5, r0
+ 1081 0326 1022     		movs	r2, #16
+ 1082 0328 0021     		movs	r1, #0
+ 1083 032a E068     		ldr	r0, [r4, #12]
+ 1084 032c FFF7FEFF 		bl	strtol
+ 1085 0330 0146     		mov	r1, r0
+ 1086 0332 2846     		mov	r0, r5
+ 1087 0334 FFF7FEFF 		bl	checkRange
+ 1088 0338 08B1     		cbz	r0, .L175
+ 1089 033a 0224     		movs	r4, #2
+ 1090 033c 8EE1     		b	.L94
+ 1091              	.L175:
+ 1092 033e 1022     		movs	r2, #16
+ 1093 0340 0021     		movs	r1, #0
+ 1094 0342 E068     		ldr	r0, [r4, #12]
+ 1095 0344 FFF7FEFF 		bl	strtol
+ 1096 0348 6FF07F41 		mvn	r1, #-16777216
+ 1097 034c FFF7FEFF 		bl	checkRange
+ 1098 0350 0446     		mov	r4, r0
+ 1099 0352 0028     		cmp	r0, #0
+ 1100 0354 40F09681 		bne	.L141
+ 1101 0358 854B     		ldr	r3, .L190+4
+ 1102 035a 1A88     		ldrh	r2, [r3]
+ 1103 035c 4FF6FF73 		movw	r3, #65535
+ 1104 0360 9A42     		cmp	r2, r3
+ 1105 0362 23D0     		beq	.L176
+ 1106              	.L107:
+ 1107 0364 834D     		ldr	r5, .L190+8
+ 1108 0366 0523     		movs	r3, #5
+ 1109 0368 2B70     		strb	r3, [r5]
+ 1110 036a 0026     		movs	r6, #0
+ 1111 036c 6E60     		str	r6, [r5, #4]
+ 1112 036e AE82     		strh	r6, [r5, #20]	@ movhi
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 20
+
+
+ 1113 0370 7E4F     		ldr	r7, .L190
+ 1114 0372 1022     		movs	r2, #16
+ 1115 0374 3146     		mov	r1, r6
+ 1116 0376 B868     		ldr	r0, [r7, #8]
+ 1117 0378 FFF7FEFF 		bl	strtol
+ 1118 037c A860     		str	r0, [r5, #8]
+ 1119 037e 1022     		movs	r2, #16
+ 1120 0380 3146     		mov	r1, r6
+ 1121 0382 F868     		ldr	r0, [r7, #12]
+ 1122 0384 FFF7FEFF 		bl	strtol
+ 1123 0388 E860     		str	r0, [r5, #12]
+ 1124 038a 2E61     		str	r6, [r5, #16]
+ 1125 038c 1022     		movs	r2, #16
+ 1126 038e 3146     		mov	r1, r6
+ 1127 0390 B869     		ldr	r0, [r7, #24]
+ 1128 0392 FFF7FEFF 		bl	strtol
+ 1129 0396 E882     		strh	r0, [r5, #22]	@ movhi
+ 1130 0398 3A68     		ldr	r2, [r7]
+ 1131 039a 774B     		ldr	r3, .L190+12
+ 1132 039c 9A42     		cmp	r2, r3
+ 1133 039e 07BF     		ittee	eq
+ 1134 03a0 2B46     		moveq	r3, r5
+ 1135 03a2 0122     		moveq	r2, #1
+ 1136 03a4 734B     		ldrne	r3, .L190+8
+ 1137 03a6 0222     		movne	r2, #2
+ 1138 03a8 5A70     		strb	r2, [r3, #1]
+ 1139 03aa 57E1     		b	.L94
+ 1140              	.L176:
+ 1141 03ac 1022     		movs	r2, #16
+ 1142 03ae 0021     		movs	r1, #0
+ 1143 03b0 6E4B     		ldr	r3, .L190
+ 1144 03b2 9868     		ldr	r0, [r3, #8]
+ 1145 03b4 FFF7FEFF 		bl	strtol
+ 1146 03b8 FFF7FEFF 		bl	checkParity
+ 1147 03bc 08B1     		cbz	r0, .L177
+ 1148 03be 0324     		movs	r4, #3
+ 1149 03c0 4CE1     		b	.L94
+ 1150              	.L177:
+ 1151 03c2 1022     		movs	r2, #16
+ 1152 03c4 0021     		movs	r1, #0
+ 1153 03c6 694B     		ldr	r3, .L190
+ 1154 03c8 D868     		ldr	r0, [r3, #12]
+ 1155 03ca FFF7FEFF 		bl	strtol
+ 1156 03ce FFF7FEFF 		bl	checkParity
+ 1157 03d2 0028     		cmp	r0, #0
+ 1158 03d4 C6D0     		beq	.L107
+ 1159 03d6 0324     		movs	r4, #3
+ 1160 03d8 40E1     		b	.L94
+ 1161              	.L105:
+ 1162 03da 2A46     		mov	r2, r5
+ 1163 03dc 6749     		ldr	r1, .L190+16
+ 1164 03de 2046     		mov	r0, r4
+ 1165 03e0 FFF7FEFF 		bl	strncmp
+ 1166 03e4 0646     		mov	r6, r0
+ 1167 03e6 2A46     		mov	r2, r5
+ 1168 03e8 6549     		ldr	r1, .L190+20
+ 1169 03ea 2046     		mov	r0, r4
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 21
+
+
+ 1170 03ec FFF7FEFF 		bl	strncmp
+ 1171 03f0 16B1     		cbz	r6, .L159
+ 1172 03f2 0028     		cmp	r0, #0
+ 1173 03f4 7FF441AE 		bne	.L106
+ 1174              	.L159:
+ 1175 03f8 032D     		cmp	r5, #3
+ 1176 03fa 7FF43EAE 		bne	.L106
+ 1177 03fe 6149     		ldr	r1, .L190+24
+ 1178 0400 0020     		movs	r0, #0
+ 1179 0402 FFF7FEFF 		bl	strtok
+ 1180 0406 0446     		mov	r4, r0
+ 1181 0408 5F49     		ldr	r1, .L190+28
+ 1182 040a 0020     		movs	r0, #0
+ 1183 040c FFF7FEFF 		bl	strtok
+ 1184 0410 0546     		mov	r5, r0
+ 1185 0412 564B     		ldr	r3, .L190
+ 1186 0414 9C60     		str	r4, [r3, #8]
+ 1187 0416 D860     		str	r0, [r3, #12]
+ 1188 0418 002C     		cmp	r4, #0
+ 1189 041a 00F03581 		beq	.L144
+ 1190 041e 0028     		cmp	r0, #0
+ 1191 0420 00F03481 		beq	.L145
+ 1192 0424 2046     		mov	r0, r4
+ 1193 0426 FFF7FEFF 		bl	strlen
+ 1194 042a 0646     		mov	r6, r0
+ 1195 042c 2846     		mov	r0, r5
+ 1196 042e FFF7FEFF 		bl	strlen
+ 1197 0432 0546     		mov	r5, r0
+ 1198 0434 3146     		mov	r1, r6
+ 1199 0436 2046     		mov	r0, r4
+ 1200 0438 FFF7FEFF 		bl	checkHexFormat
+ 1201 043c 08B1     		cbz	r0, .L178
+ 1202 043e 0424     		movs	r4, #4
+ 1203 0440 0CE1     		b	.L94
+ 1204              	.L178:
+ 1205 0442 2946     		mov	r1, r5
+ 1206 0444 494B     		ldr	r3, .L190
+ 1207 0446 D868     		ldr	r0, [r3, #12]
+ 1208 0448 FFF7FEFF 		bl	checkHexFormat
+ 1209 044c 08B1     		cbz	r0, .L179
+ 1210 044e 0424     		movs	r4, #4
+ 1211 0450 04E1     		b	.L94
+ 1212              	.L179:
+ 1213 0452 464C     		ldr	r4, .L190
+ 1214 0454 1022     		movs	r2, #16
+ 1215 0456 0021     		movs	r1, #0
+ 1216 0458 A068     		ldr	r0, [r4, #8]
+ 1217 045a FFF7FEFF 		bl	strtol
+ 1218 045e 0546     		mov	r5, r0
+ 1219 0460 1022     		movs	r2, #16
+ 1220 0462 0021     		movs	r1, #0
+ 1221 0464 E068     		ldr	r0, [r4, #12]
+ 1222 0466 FFF7FEFF 		bl	strtol
+ 1223 046a 0146     		mov	r1, r0
+ 1224 046c 2846     		mov	r0, r5
+ 1225 046e FFF7FEFF 		bl	checkRange
+ 1226 0472 08B1     		cbz	r0, .L180
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 22
+
+
+ 1227 0474 0224     		movs	r4, #2
+ 1228 0476 F1E0     		b	.L94
+ 1229              	.L180:
+ 1230 0478 1022     		movs	r2, #16
+ 1231 047a 0021     		movs	r1, #0
+ 1232 047c E068     		ldr	r0, [r4, #12]
+ 1233 047e FFF7FEFF 		bl	strtol
+ 1234 0482 6FF07F41 		mvn	r1, #-16777216
+ 1235 0486 FFF7FEFF 		bl	checkRange
+ 1236 048a 0446     		mov	r4, r0
+ 1237 048c 0028     		cmp	r0, #0
+ 1238 048e 40F0FF80 		bne	.L149
+ 1239 0492 374B     		ldr	r3, .L190+4
+ 1240 0494 1A88     		ldrh	r2, [r3]
+ 1241 0496 4FF6FF73 		movw	r3, #65535
+ 1242 049a 9A42     		cmp	r2, r3
+ 1243 049c 1DD0     		beq	.L181
+ 1244              	.L110:
+ 1245 049e 354D     		ldr	r5, .L190+8
+ 1246 04a0 0026     		movs	r6, #0
+ 1247 04a2 6E60     		str	r6, [r5, #4]
+ 1248 04a4 AE82     		strh	r6, [r5, #20]	@ movhi
+ 1249 04a6 314F     		ldr	r7, .L190
+ 1250 04a8 1022     		movs	r2, #16
+ 1251 04aa 3146     		mov	r1, r6
+ 1252 04ac B868     		ldr	r0, [r7, #8]
+ 1253 04ae FFF7FEFF 		bl	strtol
+ 1254 04b2 A860     		str	r0, [r5, #8]
+ 1255 04b4 1022     		movs	r2, #16
+ 1256 04b6 3146     		mov	r1, r6
+ 1257 04b8 F868     		ldr	r0, [r7, #12]
+ 1258 04ba FFF7FEFF 		bl	strtol
+ 1259 04be E860     		str	r0, [r5, #12]
+ 1260 04c0 2E61     		str	r6, [r5, #16]
+ 1261 04c2 EE82     		strh	r6, [r5, #22]	@ movhi
+ 1262 04c4 6E70     		strb	r6, [r5, #1]
+ 1263 04c6 3A68     		ldr	r2, [r7]
+ 1264 04c8 2C4B     		ldr	r3, .L190+16
+ 1265 04ca 9A42     		cmp	r2, r3
+ 1266 04cc 07BF     		ittee	eq
+ 1267 04ce 2B46     		moveq	r3, r5
+ 1268 04d0 0322     		moveq	r2, #3
+ 1269 04d2 284B     		ldrne	r3, .L190+8
+ 1270 04d4 0422     		movne	r2, #4
+ 1271 04d6 1A70     		strb	r2, [r3]
+ 1272 04d8 C0E0     		b	.L94
+ 1273              	.L181:
+ 1274 04da 1022     		movs	r2, #16
+ 1275 04dc 0021     		movs	r1, #0
+ 1276 04de 234B     		ldr	r3, .L190
+ 1277 04e0 9868     		ldr	r0, [r3, #8]
+ 1278 04e2 FFF7FEFF 		bl	strtol
+ 1279 04e6 FFF7FEFF 		bl	checkParity
+ 1280 04ea 08B1     		cbz	r0, .L182
+ 1281 04ec 0324     		movs	r4, #3
+ 1282 04ee B5E0     		b	.L94
+ 1283              	.L182:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 23
+
+
+ 1284 04f0 1022     		movs	r2, #16
+ 1285 04f2 0021     		movs	r1, #0
+ 1286 04f4 1D4B     		ldr	r3, .L190
+ 1287 04f6 D868     		ldr	r0, [r3, #12]
+ 1288 04f8 FFF7FEFF 		bl	strtol
+ 1289 04fc FFF7FEFF 		bl	checkParity
+ 1290 0500 0028     		cmp	r0, #0
+ 1291 0502 CCD0     		beq	.L110
+ 1292 0504 0324     		movs	r4, #3
+ 1293 0506 A9E0     		b	.L94
+ 1294              	.L165:
+ 1295 0508 1F49     		ldr	r1, .L190+28
+ 1296 050a FFF7FEFF 		bl	strtok
+ 1297 050e 174B     		ldr	r3, .L190
+ 1298 0510 9861     		str	r0, [r3, #24]
+ 1299 0512 0028     		cmp	r0, #0
+ 1300 0514 00F0BE80 		beq	.L152
+ 1301 0518 1022     		movs	r2, #16
+ 1302 051a 0021     		movs	r1, #0
+ 1303 051c FFF7FEFF 		bl	strtol
+ 1304 0520 4FF0FF31 		mov	r1, #-1
+ 1305 0524 FFF7FEFF 		bl	checkRange
+ 1306 0528 0446     		mov	r4, r0
+ 1307 052a 0028     		cmp	r0, #0
+ 1308 052c 40F0B480 		bne	.L153
+ 1309 0530 164B     		ldr	r3, .L190+32
+ 1310 0532 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 1311 0534 531E     		subs	r3, r2, #1
+ 1312 0536 DBB2     		uxtb	r3, r3
+ 1313 0538 012B     		cmp	r3, #1
+ 1314 053a 01D9     		bls	.L183
+ 1315 053c 0724     		movs	r4, #7
+ 1316 053e 8DE0     		b	.L94
+ 1317              	.L183:
+ 1318 0540 0C4D     		ldr	r5, .L190+8
+ 1319 0542 2A70     		strb	r2, [r5]
+ 1320 0544 114B     		ldr	r3, .L190+32
+ 1321 0546 5A68     		ldr	r2, [r3, #4]
+ 1322 0548 6A60     		str	r2, [r5, #4]
+ 1323 054a 9A8A     		ldrh	r2, [r3, #20]
+ 1324 054c AA82     		strh	r2, [r5, #20]	@ movhi
+ 1325 054e 9A68     		ldr	r2, [r3, #8]
+ 1326 0550 AA60     		str	r2, [r5, #8]
+ 1327 0552 DA68     		ldr	r2, [r3, #12]
+ 1328 0554 EA60     		str	r2, [r5, #12]
+ 1329 0556 1B69     		ldr	r3, [r3, #16]
+ 1330 0558 2B61     		str	r3, [r5, #16]
+ 1331 055a 1022     		movs	r2, #16
+ 1332 055c 0021     		movs	r1, #0
+ 1333 055e 034B     		ldr	r3, .L190
+ 1334 0560 9869     		ldr	r0, [r3, #24]
+ 1335 0562 FFF7FEFF 		bl	strtol
+ 1336 0566 E882     		strh	r0, [r5, #22]	@ movhi
+ 1337 0568 78E0     		b	.L94
+ 1338              	.L191:
+ 1339 056a 00BF     		.align	2
+ 1340              	.L190:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 24
+
+
+ 1341 056c 00000000 		.word	UART_Message
+ 1342 0570 00000000 		.word	DeviceConfiguration
+ 1343 0574 00000000 		.word	.LANCHOR0
+ 1344 0578 1C000000 		.word	.LC38
+ 1345 057c 28000000 		.word	.LC41
+ 1346 0580 2C000000 		.word	.LC42
+ 1347 0584 24000000 		.word	.LC40
+ 1348 0588 10000000 		.word	.LC35
+ 1349 058c 00000000 		.word	.LANCHOR1
+ 1350              	.L112:
+ 1351 0590 2A46     		mov	r2, r5
+ 1352 0592 4549     		ldr	r1, .L192
+ 1353 0594 2046     		mov	r0, r4
+ 1354 0596 FFF7FEFF 		bl	strncmp
+ 1355 059a 0028     		cmp	r0, #0
+ 1356 059c 7FF480AD 		bne	.L114
+ 1357 05a0 042D     		cmp	r5, #4
+ 1358 05a2 21D0     		beq	.L184
+ 1359              	.L115:
+ 1360 05a4 2A46     		mov	r2, r5
+ 1361 05a6 4149     		ldr	r1, .L192+4
+ 1362 05a8 2046     		mov	r0, r4
+ 1363 05aa FFF7FEFF 		bl	strncmp
+ 1364 05ae 08B9     		cbnz	r0, .L116
+ 1365 05b0 072D     		cmp	r5, #7
+ 1366 05b2 1DD0     		beq	.L185
+ 1367              	.L116:
+ 1368 05b4 2A46     		mov	r2, r5
+ 1369 05b6 3E49     		ldr	r1, .L192+8
+ 1370 05b8 2046     		mov	r0, r4
+ 1371 05ba FFF7FEFF 		bl	strncmp
+ 1372 05be 18BB     		cbnz	r0, .L117
+ 1373 05c0 022D     		cmp	r5, #2
+ 1374 05c2 19D0     		beq	.L186
+ 1375              	.L118:
+ 1376 05c4 2A46     		mov	r2, r5
+ 1377 05c6 3B49     		ldr	r1, .L192+12
+ 1378 05c8 2046     		mov	r0, r4
+ 1379 05ca FFF7FEFF 		bl	strncmp
+ 1380 05ce 0028     		cmp	r0, #0
+ 1381 05d0 68D0     		beq	.L158
+ 1382              	.L120:
+ 1383 05d2 2A46     		mov	r2, r5
+ 1384 05d4 3849     		ldr	r1, .L192+16
+ 1385 05d6 2046     		mov	r0, r4
+ 1386 05d8 FFF7FEFF 		bl	strncmp
+ 1387 05dc 0028     		cmp	r0, #0
+ 1388 05de 5FD1     		bne	.L156
+ 1389 05e0 022D     		cmp	r5, #2
+ 1390 05e2 32D0     		beq	.L187
+ 1391 05e4 0A24     		movs	r4, #10
+ 1392 05e6 39E0     		b	.L94
+ 1393              	.L184:
+ 1394 05e8 FFF7FEFF 		bl	SaveCommand
+ 1395 05ec 0024     		movs	r4, #0
+ 1396 05ee 35E0     		b	.L94
+ 1397              	.L185:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 25
+
+
+ 1398 05f0 FFF7FEFF 		bl	DefaultCommand
+ 1399 05f4 0024     		movs	r4, #0
+ 1400 05f6 31E0     		b	.L94
+ 1401              	.L186:
+ 1402 05f8 304B     		ldr	r3, .L192+20
+ 1403 05fa FF22     		movs	r2, #255
+ 1404 05fc 1A80     		strh	r2, [r3]	@ movhi
+ 1405 05fe 3048     		ldr	r0, .L192+24
+ 1406 0600 FFF7FEFF 		bl	SendMessage
+ 1407 0604 0024     		movs	r4, #0
+ 1408 0606 29E0     		b	.L94
+ 1409              	.L117:
+ 1410 0608 2A46     		mov	r2, r5
+ 1411 060a 2E49     		ldr	r1, .L192+28
+ 1412 060c 2046     		mov	r0, r4
+ 1413 060e FFF7FEFF 		bl	strncmp
+ 1414 0612 50B9     		cbnz	r0, .L119
+ 1415 0614 022D     		cmp	r5, #2
+ 1416 0616 D5D1     		bne	.L118
+ 1417 0618 284B     		ldr	r3, .L192+20
+ 1418 061a 4FF6FF72 		movw	r2, #65535
+ 1419 061e 1A80     		strh	r2, [r3]	@ movhi
+ 1420 0620 2948     		ldr	r0, .L192+32
+ 1421 0622 FFF7FEFF 		bl	SendMessage
+ 1422 0626 0024     		movs	r4, #0
+ 1423 0628 18E0     		b	.L94
+ 1424              	.L119:
+ 1425 062a 2A46     		mov	r2, r5
+ 1426 062c 2149     		ldr	r1, .L192+12
+ 1427 062e 2046     		mov	r0, r4
+ 1428 0630 FFF7FEFF 		bl	strncmp
+ 1429 0634 0028     		cmp	r0, #0
+ 1430 0636 CCD1     		bne	.L120
+ 1431 0638 022D     		cmp	r5, #2
+ 1432 063a 2FD1     		bne	.L155
+ 1433 063c 0024     		movs	r4, #0
+ 1434 063e 1F4B     		ldr	r3, .L192+20
+ 1435 0640 9C70     		strb	r4, [r3, #2]
+ 1436 0642 2248     		ldr	r0, .L192+36
+ 1437 0644 FFF7FEFF 		bl	SendMessage
+ 1438 0648 08E0     		b	.L94
+ 1439              	.L187:
+ 1440 064a 1C4B     		ldr	r3, .L192+20
+ 1441 064c 0122     		movs	r2, #1
+ 1442 064e 9A70     		strb	r2, [r3, #2]
+ 1443 0650 1F48     		ldr	r0, .L192+40
+ 1444 0652 FFF7FEFF 		bl	SendMessage
+ 1445 0656 0024     		movs	r4, #0
+ 1446 0658 00E0     		b	.L94
+ 1447              	.L122:
+ 1448 065a 0924     		movs	r4, #9
+ 1449              	.L94:
+ 1450 065c 2046     		mov	r0, r4
+ 1451 065e FFF7FEFF 		bl	errorType
+ 1452 0662 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1453              	.L123:
+ 1454 0664 0924     		movs	r4, #9
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 26
+
+
+ 1455 0666 F9E7     		b	.L94
+ 1456              	.L124:
+ 1457 0668 0924     		movs	r4, #9
+ 1458 066a F7E7     		b	.L94
+ 1459              	.L128:
+ 1460 066c 0124     		movs	r4, #1
+ 1461 066e F5E7     		b	.L94
+ 1462              	.L130:
+ 1463 0670 0924     		movs	r4, #9
+ 1464 0672 F3E7     		b	.L94
+ 1465              	.L132:
+ 1466 0674 0224     		movs	r4, #2
+ 1467 0676 F1E7     		b	.L94
+ 1468              	.L134:
+ 1469 0678 0924     		movs	r4, #9
+ 1470 067a EFE7     		b	.L94
+ 1471              	.L135:
+ 1472 067c 0924     		movs	r4, #9
+ 1473 067e EDE7     		b	.L94
+ 1474              	.L136:
+ 1475 0680 0924     		movs	r4, #9
+ 1476 0682 EBE7     		b	.L94
+ 1477              	.L141:
+ 1478 0684 0224     		movs	r4, #2
+ 1479 0686 E9E7     		b	.L94
+ 1480              	.L144:
+ 1481 0688 0924     		movs	r4, #9
+ 1482 068a E7E7     		b	.L94
+ 1483              	.L145:
+ 1484 068c 0924     		movs	r4, #9
+ 1485 068e E5E7     		b	.L94
+ 1486              	.L149:
+ 1487 0690 0224     		movs	r4, #2
+ 1488 0692 E3E7     		b	.L94
+ 1489              	.L152:
+ 1490 0694 0724     		movs	r4, #7
+ 1491 0696 E1E7     		b	.L94
+ 1492              	.L153:
+ 1493 0698 0824     		movs	r4, #8
+ 1494 069a DFE7     		b	.L94
+ 1495              	.L155:
+ 1496 069c 0A24     		movs	r4, #10
+ 1497 069e DDE7     		b	.L94
+ 1498              	.L156:
+ 1499 06a0 0A24     		movs	r4, #10
+ 1500 06a2 DBE7     		b	.L94
+ 1501              	.L158:
+ 1502 06a4 0A24     		movs	r4, #10
+ 1503 06a6 D9E7     		b	.L94
+ 1504              	.L193:
+ 1505              		.align	2
+ 1506              	.L192:
+ 1507 06a8 38000000 		.word	.LC44
+ 1508 06ac 48000000 		.word	.LC46
+ 1509 06b0 50000000 		.word	.LC47
+ 1510 06b4 58000000 		.word	.LC49
+ 1511 06b8 5C000000 		.word	.LC50
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 27
+
+
+ 1512 06bc 00000000 		.word	DeviceConfiguration
+ 1513 06c0 00000000 		.word	.LC26
+ 1514 06c4 54000000 		.word	.LC48
+ 1515 06c8 0C000000 		.word	.LC27
+ 1516 06cc 18000000 		.word	.LC28
+ 1517 06d0 28000000 		.word	.LC29
+ 1519              		.section	.text.RecieveMessage,"ax",%progbits
+ 1520              		.align	1
+ 1521              		.global	RecieveMessage
+ 1522              		.syntax unified
+ 1523              		.thumb
+ 1524              		.thumb_func
+ 1525              		.fpu softvfp
+ 1527              	RecieveMessage:
+ 1528              		@ args = 0, pretend = 0, frame = 0
+ 1529              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1530 0000 38B5     		push	{r3, r4, r5, lr}
+ 1531 0002 144B     		ldr	r3, .L202
+ 1532 0004 C35C     		ldrb	r3, [r0, r3]	@ zero_extendqisi2
+ 1533 0006 03F00303 		and	r3, r3, #3
+ 1534 000a 022B     		cmp	r3, #2
+ 1535 000c 08BF     		it	eq
+ 1536 000e 2038     		subeq	r0, r0, #32
+ 1537 0010 114B     		ldr	r3, .L202+4
+ 1538 0012 1B68     		ldr	r3, [r3]
+ 1539 0014 262B     		cmp	r3, #38
+ 1540 0016 16D8     		bhi	.L197
+ 1541 0018 C0B2     		uxtb	r0, r0
+ 1542 001a 0D28     		cmp	r0, #13
+ 1543 001c 05D0     		beq	.L201
+ 1544 001e 591C     		adds	r1, r3, #1
+ 1545 0020 0D4A     		ldr	r2, .L202+4
+ 1546 0022 1160     		str	r1, [r2]
+ 1547 0024 0D4A     		ldr	r2, .L202+8
+ 1548 0026 D054     		strb	r0, [r2, r3]
+ 1549              	.L194:
+ 1550 0028 38BD     		pop	{r3, r4, r5, pc}
+ 1551              	.L201:
+ 1552 002a 0D48     		ldr	r0, .L202+12
+ 1553 002c FFF7FEFF 		bl	SendMessage
+ 1554 0030 094C     		ldr	r4, .L202+4
+ 1555 0032 2368     		ldr	r3, [r4]
+ 1556 0034 5A1C     		adds	r2, r3, #1
+ 1557 0036 2260     		str	r2, [r4]
+ 1558 0038 0848     		ldr	r0, .L202+8
+ 1559 003a 0025     		movs	r5, #0
+ 1560 003c C554     		strb	r5, [r0, r3]
+ 1561 003e FFF7FEFF 		bl	parseUARTMessage
+ 1562 0042 2560     		str	r5, [r4]
+ 1563 0044 F0E7     		b	.L194
+ 1564              	.L197:
+ 1565 0046 0748     		ldr	r0, .L202+16
+ 1566 0048 FFF7FEFF 		bl	SendMessage
+ 1567 004c 024B     		ldr	r3, .L202+4
+ 1568 004e 0022     		movs	r2, #0
+ 1569 0050 1A60     		str	r2, [r3]
+ 1570 0052 E9E7     		b	.L194
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 28
+
+
+ 1571              	.L203:
+ 1572              		.align	2
+ 1573              	.L202:
+ 1574 0054 01000000 		.word	_ctype_+1
+ 1575 0058 00000000 		.word	.LANCHOR2
+ 1576 005c 00000000 		.word	recieved
+ 1577 0060 00000000 		.word	.LC51
+ 1578 0064 04000000 		.word	.LC52
+ 1580              		.section	.text.USART1_IRQHandler,"ax",%progbits
+ 1581              		.align	1
+ 1582              		.global	USART1_IRQHandler
+ 1583              		.syntax unified
+ 1584              		.thumb
+ 1585              		.thumb_func
+ 1586              		.fpu softvfp
+ 1588              	USART1_IRQHandler:
+ 1589              		@ args = 0, pretend = 0, frame = 0
+ 1590              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1591 0000 08B5     		push	{r3, lr}
+ 1592 0002 074B     		ldr	r3, .L208
+ 1593 0004 1B88     		ldrh	r3, [r3]
+ 1594 0006 13F0200F 		tst	r3, #32
+ 1595 000a 05D0     		beq	.L205
+ 1596 000c 044B     		ldr	r3, .L208
+ 1597 000e 9888     		ldrh	r0, [r3, #4]
+ 1598 0010 C0B2     		uxtb	r0, r0
+ 1599 0012 FFF7FEFF 		bl	RecieveMessage
+ 1600              	.L204:
+ 1601 0016 08BD     		pop	{r3, pc}
+ 1602              	.L205:
+ 1603 0018 0248     		ldr	r0, .L208+4
+ 1604 001a FFF7FEFF 		bl	SendMessage
+ 1605 001e FAE7     		b	.L204
+ 1606              	.L209:
+ 1607              		.align	2
+ 1608              	.L208:
+ 1609 0020 00380140 		.word	1073821696
+ 1610 0024 00000000 		.word	.LC53
+ 1612              		.section	.text.main,"ax",%progbits
+ 1613              		.align	1
+ 1614              		.global	main
+ 1615              		.syntax unified
+ 1616              		.thumb
+ 1617              		.thumb_func
+ 1618              		.fpu softvfp
+ 1620              	main:
+ 1621              		@ Volatile: function does not return.
+ 1622              		@ args = 0, pretend = 0, frame = 0
+ 1623              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1624 0000 08B5     		push	{r3, lr}
+ 1625 0002 FFF7FEFF 		bl	IO_Init
+ 1626 0006 FFF7FEFF 		bl	initUSART1_19200
+ 1627 000a FFF7FEFF 		bl	initIRQHandler
+ 1628 000e FFF7FEFF 		bl	initTIM1_msTimer
+ 1629 0012 FFF7FEFF 		bl	initTIM3CH2_externalCounter
+ 1630 0016 FFF7FEFF 		bl	initDeviceConfig
+ 1631 001a 0348     		ldr	r0, .L213
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 29
+
+
+ 1632 001c FFF7FEFF 		bl	SendMessage
+ 1633              	.L211:
+ 1634 0020 FFF7FEFF 		bl	taskExecCommand
+ 1635 0024 FCE7     		b	.L211
+ 1636              	.L214:
+ 1637 0026 00BF     		.align	2
+ 1638              	.L213:
+ 1639 0028 00000000 		.word	.LC54
+ 1641              		.global	rec_len
+ 1642              		.comm	recieved,40,4
+ 1643              		.comm	DeviceConfiguration,4,4
+ 1644              		.comm	FlashControl,8,4
+ 1645              		.global	LastCommand
+ 1646              		.global	CurrentCommand
+ 1647              		.comm	UART_Message,28,4
+ 1648              		.section	.bss.CurrentCommand,"aw",%nobits
+ 1649              		.align	2
+ 1650              		.set	.LANCHOR0,. + 0
+ 1653              	CurrentCommand:
+ 1654 0000 00000000 		.space	24
+ 1654      00000000 
+ 1654      00000000 
+ 1654      00000000 
+ 1654      00000000 
+ 1655              		.section	.bss.LastCommand,"aw",%nobits
+ 1656              		.align	2
+ 1657              		.set	.LANCHOR1,. + 0
+ 1660              	LastCommand:
+ 1661 0000 00000000 		.space	24
+ 1661      00000000 
+ 1661      00000000 
+ 1661      00000000 
+ 1661      00000000 
+ 1662              		.section	.bss.rec_len,"aw",%nobits
+ 1663              		.align	2
+ 1664              		.set	.LANCHOR2,. + 0
+ 1667              	rec_len:
+ 1668 0000 00000000 		.space	4
+ 1669              		.section	.rodata.DefaultCommand.str1.4,"aMS",%progbits,1
+ 1670              		.align	2
+ 1671              	.LC0:
+ 1672 0000 4C6F6164 		.ascii	"Loaded default device configuration: 16 bit, sync o"
+ 1672      65642064 
+ 1672      65666175 
+ 1672      6C742064 
+ 1672      65766963 
+ 1673 0033 6E206164 		.ascii	"n address\000"
+ 1673      64726573 
+ 1673      7300
+ 1674              		.section	.rodata.HelpCommand.str1.4,"aMS",%progbits,1
+ 1675              		.align	2
+ 1676              	.LC1:
+ 1677 0000 3C2D2D2D 		.ascii	"<---------------HELP--------------->\000"
+ 1677      2D2D2D2D 
+ 1677      2D2D2D2D 
+ 1677      2D2D2D2D 
+ 1677      48454C50 
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 30
+
+
+ 1678 0025 000000   		.space	3
+ 1679              	.LC2:
+ 1680 0028 57524D2C 		.ascii	"WRM, WRP - write command\000"
+ 1680      20575250 
+ 1680      202D2077 
+ 1680      72697465 
+ 1680      20636F6D 
+ 1681 0041 000000   		.space	3
+ 1682              	.LC3:
+ 1683 0044 52444D2C 		.ascii	"RDM, RDP - read command\000"
+ 1683      20524450 
+ 1683      202D2072 
+ 1683      65616420 
+ 1683      636F6D6D 
+ 1684              	.LC4:
+ 1685 005c 2000     		.ascii	" \000"
+ 1686 005e 0000     		.space	2
+ 1687              	.LC5:
+ 1688 0060 666F726D 		.ascii	"format command@address=data\000"
+ 1688      61742063 
+ 1688      6F6D6D61 
+ 1688      6E644061 
+ 1688      64647265 
+ 1689              	.LC6:
+ 1690 007c 53415645 		.ascii	"SAVE - command that save current device configurati"
+ 1690      202D2063 
+ 1690      6F6D6D61 
+ 1690      6E642074 
+ 1690      68617420 
+ 1691 00af 6F6E00   		.ascii	"on\000"
+ 1692 00b2 0000     		.space	2
+ 1693              	.LC7:
+ 1694 00b4 3C2D2D2D 		.ascii	"<-------------END-HELP------------->\000"
+ 1694      2D2D2D2D 
+ 1694      2D2D2D2D 
+ 1694      2D2D454E 
+ 1694      442D4845 
+ 1695              		.section	.rodata.ReadCommand.str1.4,"aMS",%progbits,1
+ 1696              		.align	2
+ 1697              	.LC8:
+ 1698 0000 52454144 		.ascii	"READ Command\000"
+ 1698      20436F6D 
+ 1698      6D616E64 
+ 1698      00
+ 1699 000d 000000   		.space	3
+ 1700              	.LC9:
+ 1701 0010 255800   		.ascii	"%X\000"
+ 1702 0013 00       		.space	1
+ 1703              	.LC10:
+ 1704 0014 3C2D2D2D 		.ascii	"<----read complete---\000"
+ 1704      2D726561 
+ 1704      6420636F 
+ 1704      6D706C65 
+ 1704      74652D2D 
+ 1705              		.section	.rodata.RecieveMessage.str1.4,"aMS",%progbits,1
+ 1706              		.align	2
+ 1707              	.LC51:
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 31
+
+
+ 1708 0000 3E00     		.ascii	">\000"
+ 1709 0002 0000     		.space	2
+ 1710              	.LC52:
+ 1711 0004 546F6F20 		.ascii	"Too long command\000"
+ 1711      6C6F6E67 
+ 1711      20636F6D 
+ 1711      6D616E64 
+ 1711      00
+ 1712              		.section	.rodata.SaveCommand.str1.4,"aMS",%progbits,1
+ 1713              		.align	2
+ 1714              	.LC25:
+ 1715 0000 43757272 		.ascii	"Current configuration saved\000"
+ 1715      656E7420 
+ 1715      636F6E66 
+ 1715      69677572 
+ 1715      6174696F 
+ 1716              		.section	.rodata.USART1_IRQHandler.str1.4,"aMS",%progbits,1
+ 1717              		.align	2
+ 1718              	.LC53:
+ 1719 0000 45786570 		.ascii	"Exeption #1 - UART\000"
+ 1719      74696F6E 
+ 1719      20233120 
+ 1719      2D205541 
+ 1719      525400
+ 1720              		.section	.rodata.WriteCommand.str1.4,"aMS",%progbits,1
+ 1721              		.align	2
+ 1722              	.LC11:
+ 1723 0000 57524954 		.ascii	"WRITE Command\000"
+ 1723      4520436F 
+ 1723      6D6D616E 
+ 1723      6400
+ 1724 000e 0000     		.space	2
+ 1725              	.LC12:
+ 1726 0010 3C2D2D2D 		.ascii	"<-------write complete---\000"
+ 1726      2D2D2D2D 
+ 1726      77726974 
+ 1726      6520636F 
+ 1726      6D706C65 
+ 1727              		.section	.rodata.errorType.str1.4,"aMS",%progbits,1
+ 1728              		.align	2
+ 1729              	.LC13:
+ 1730 0000 20686176 		.ascii	" have no errors\000"
+ 1730      65206E6F 
+ 1730      20657272 
+ 1730      6F727300 
+ 1731              	.LC14:
+ 1732 0010 44617461 		.ascii	"Data out of range\000"
+ 1732      206F7574 
+ 1732      206F6620 
+ 1732      72616E67 
+ 1732      6500
+ 1733 0022 0000     		.space	2
+ 1734              	.LC15:
+ 1735 0024 41646472 		.ascii	"Address out of range\000"
+ 1735      65737320 
+ 1735      6F757420 
+ 1735      6F662072 
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 32
+
+
+ 1735      616E6765 
+ 1736 0039 000000   		.space	3
+ 1737              	.LC16:
+ 1738 003c 41646472 		.ascii	"Address is not even number\000"
+ 1738      65737320 
+ 1738      6973206E 
+ 1738      6F742065 
+ 1738      76656E20 
+ 1739 0057 00       		.space	1
+ 1740              	.LC17:
+ 1741 0058 41444452 		.ascii	"ADDRESS or DATA have no hex format\000"
+ 1741      45535320 
+ 1741      6F722044 
+ 1741      41544120 
+ 1741      68617665 
+ 1742 007b 00       		.space	1
+ 1743              	.LC18:
+ 1744 007c 53746172 		.ascii	"Start Address more than Stop Adress\000"
+ 1744      74204164 
+ 1744      64726573 
+ 1744      73206D6F 
+ 1744      72652074 
+ 1745              	.LC19:
+ 1746 00a0 41646472 		.ascii	"Address have no hex format\000"
+ 1746      65737320 
+ 1746      68617665 
+ 1746      206E6F20 
+ 1746      68657820 
+ 1747 00bb 00       		.space	1
+ 1748              	.LC20:
+ 1749 00bc 556E6162 		.ascii	"Unable to loop last command\000"
+ 1749      6C652074 
+ 1749      6F206C6F 
+ 1749      6F70206C 
+ 1749      61737420 
+ 1750              	.LC21:
+ 1751 00d8 546F6F20 		.ascii	"Too much repeat counter (32bit)\000"
+ 1751      6D756368 
+ 1751      20726570 
+ 1751      65617420 
+ 1751      636F756E 
+ 1752              	.LC22:
+ 1753 00f8 596F7520 		.ascii	"You tried calculate lenght from NULL pointer\000"
+ 1753      74726965 
+ 1753      64206361 
+ 1753      6C63756C 
+ 1753      61746520 
+ 1754 0125 000000   		.space	3
+ 1755              	.LC23:
+ 1756 0128 556E6B6E 		.ascii	"Unknow command\000"
+ 1756      6F772063 
+ 1756      6F6D6D61 
+ 1756      6E6400
+ 1757 0137 00       		.space	1
+ 1758              	.LC24:
+ 1759 0138 556E6B6E 		.ascii	"Unknow type error\000"
+ 1759      6F772074 
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 33
+
+
+ 1759      79706520 
+ 1759      6572726F 
+ 1759      7200
+ 1760              		.section	.rodata.initDeviceConfig.str1.4,"aMS",%progbits,1
+ 1761              		.align	2
+ 1762              	.LC26:
+ 1763 0000 382D6269 		.ascii	"8-bit mode\000"
+ 1763      74206D6F 
+ 1763      646500
+ 1764 000b 00       		.space	1
+ 1765              	.LC27:
+ 1766 000c 31362D62 		.ascii	"16-bit mode\000"
+ 1766      6974206D 
+ 1766      6F646500 
+ 1767              	.LC28:
+ 1768 0018 53796E63 		.ascii	"Sync on DATA\000"
+ 1768      206F6E20 
+ 1768      44415441 
+ 1768      00
+ 1769 0025 000000   		.space	3
+ 1770              	.LC29:
+ 1771 0028 53796E63 		.ascii	"Sync on ADDRESS\000"
+ 1771      206F6E20 
+ 1771      41444452 
+ 1771      45535300 
+ 1772              	.LC30:
+ 1773 0038 436F6E66 		.ascii	"Configuration loaded from FLASH\000"
+ 1773      69677572 
+ 1773      6174696F 
+ 1773      6E206C6F 
+ 1773      61646564 
+ 1774              		.section	.rodata.main.str1.4,"aMS",%progbits,1
+ 1775              		.align	2
+ 1776              	.LC54:
+ 1777 0000 52656164 		.ascii	"Ready\000"
+ 1777      7900
+ 1778              		.section	.rodata.parseUARTMessage.str1.4,"aMS",%progbits,1
+ 1779              		.align	2
+ 1780              	.LC31:
+ 1781 0000 4000     		.ascii	"@\000"
+ 1782 0002 0000     		.space	2
+ 1783              	.LC32:
+ 1784 0004 57524D00 		.ascii	"WRM\000"
+ 1785              	.LC33:
+ 1786 0008 57525000 		.ascii	"WRP\000"
+ 1787              	.LC34:
+ 1788 000c 3D00     		.ascii	"=\000"
+ 1789 000e 0000     		.space	2
+ 1790              	.LC35:
+ 1791 0010 00       		.ascii	"\000"
+ 1792 0011 000000   		.space	3
+ 1793              	.LC36:
+ 1794 0014 52444D00 		.ascii	"RDM\000"
+ 1795              	.LC37:
+ 1796 0018 52445000 		.ascii	"RDP\000"
+ 1797              	.LC38:
+ 1798 001c 46444D00 		.ascii	"FDM\000"
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 34
+
+
+ 1799              	.LC39:
+ 1800 0020 46445000 		.ascii	"FDP\000"
+ 1801              	.LC40:
+ 1802 0024 2D00     		.ascii	"-\000"
+ 1803 0026 0000     		.space	2
+ 1804              	.LC41:
+ 1805 0028 52414D00 		.ascii	"RAM\000"
+ 1806              	.LC42:
+ 1807 002c 524F4D00 		.ascii	"ROM\000"
+ 1808              	.LC43:
+ 1809 0030 4C4F4F50 		.ascii	"LOOP\000"
+ 1809      00
+ 1810 0035 000000   		.space	3
+ 1811              	.LC44:
+ 1812 0038 53415645 		.ascii	"SAVE\000"
+ 1812      00
+ 1813 003d 000000   		.space	3
+ 1814              	.LC45:
+ 1815 0040 48454C50 		.ascii	"HELP\000"
+ 1815      00
+ 1816 0045 000000   		.space	3
+ 1817              	.LC46:
+ 1818 0048 44454641 		.ascii	"DEFAULT\000"
+ 1818      554C5400 
+ 1819              	.LC47:
+ 1820 0050 534200   		.ascii	"SB\000"
+ 1821 0053 00       		.space	1
+ 1822              	.LC48:
+ 1823 0054 535700   		.ascii	"SW\000"
+ 1824 0057 00       		.space	1
+ 1825              	.LC49:
+ 1826 0058 534400   		.ascii	"SD\000"
+ 1827 005b 00       		.space	1
+ 1828              	.LC50:
+ 1829 005c 534100   		.ascii	"SA\000"
+ 1830              		.ident	"GCC: (GNU MCU Eclipse ARM Embedded GCC, 64-bit) 8.2.1 20181213 (release) [gcc-8-branch rev
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 35
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+  F:\TEMP\ccIG2vRz.s:14     .text.resetCC:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:22     .text.resetCC:0000000000000000 resetCC
+  F:\TEMP\ccIG2vRz.s:40     .text.resetCC:0000000000000018 $d
+  F:\TEMP\ccIG2vRz.s:43     .text.copyCCtoLC:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:50     .text.copyCCtoLC:0000000000000000 copyCCtoLC
+  F:\TEMP\ccIG2vRz.s:66     .text.copyCCtoLC:0000000000000018 $d
+  F:\TEMP\ccIG2vRz.s:70     .text.delay_ms:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:77     .text.delay_ms:0000000000000000 delay_ms
+  F:\TEMP\ccIG2vRz.s:108    .text.delay_ms:0000000000000038 $d
+  F:\TEMP\ccIG2vRz.s:111    .text.DataBusRead:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:118    .text.DataBusRead:0000000000000000 DataBusRead
+  F:\TEMP\ccIG2vRz.s:139    .text.DataBusRead:0000000000000024 $d
+  F:\TEMP\ccIG2vRz.s:142    .text.DataBusWrite:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:149    .text.DataBusWrite:0000000000000000 DataBusWrite
+  F:\TEMP\ccIG2vRz.s:170    .text.DataBusWrite:0000000000000024 $d
+  F:\TEMP\ccIG2vRz.s:173    .text.SendMessage:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:180    .text.SendMessage:0000000000000000 SendMessage
+  F:\TEMP\ccIG2vRz.s:218    .text.SendMessage:0000000000000044 $d
+  F:\TEMP\ccIG2vRz.s:221    .text.DefaultCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:228    .text.DefaultCommand:0000000000000000 DefaultCommand
+  F:\TEMP\ccIG2vRz.s:243    .text.DefaultCommand:0000000000000018 $d
+                            *COM*:0000000000000004 DeviceConfiguration
+  F:\TEMP\ccIG2vRz.s:247    .text.HelpCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:254    .text.HelpCommand:0000000000000000 HelpCommand
+  F:\TEMP\ccIG2vRz.s:276    .text.HelpCommand:0000000000000030 $d
+  F:\TEMP\ccIG2vRz.s:285    .text.ReadCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:292    .text.ReadCommand:0000000000000000 ReadCommand
+  F:\TEMP\ccIG2vRz.s:369    .text.ReadCommand:00000000000000b8 $d
+  F:\TEMP\ccIG2vRz.s:377    .text.WriteCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:384    .text.WriteCommand:0000000000000000 WriteCommand
+  F:\TEMP\ccIG2vRz.s:447    .text.WriteCommand:0000000000000098 $d
+  F:\TEMP\ccIG2vRz.s:454    .text.taskExecCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:461    .text.taskExecCommand:0000000000000000 taskExecCommand
+  F:\TEMP\ccIG2vRz.s:511    .text.taskExecCommand:0000000000000054 $d
+  F:\TEMP\ccIG2vRz.s:514    .text.errorType:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:521    .text.errorType:0000000000000000 errorType
+  F:\TEMP\ccIG2vRz.s:529    .text.errorType:000000000000000a $d
+  F:\TEMP\ccIG2vRz.s:604    .text.errorType:0000000000000090 $d
+                            *COM*:0000000000000028 recieved
+  F:\TEMP\ccIG2vRz.s:619    .text.SaveCommand:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:626    .text.SaveCommand:0000000000000000 SaveCommand
+  F:\TEMP\ccIG2vRz.s:653    .text.SaveCommand:0000000000000038 $d
+                            *COM*:0000000000000008 FlashControl
+  F:\TEMP\ccIG2vRz.s:662    .text.initDeviceConfig:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:669    .text.initDeviceConfig:0000000000000000 initDeviceConfig
+  F:\TEMP\ccIG2vRz.s:716    .text.initDeviceConfig:0000000000000054 $d
+  F:\TEMP\ccIG2vRz.s:728    .text.parseUARTMessage:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:735    .text.parseUARTMessage:0000000000000000 parseUARTMessage
+  F:\TEMP\ccIG2vRz.s:1050   .text.parseUARTMessage:00000000000002c8 $d
+                            *COM*:000000000000001c UART_Message
+  F:\TEMP\ccIG2vRz.s:1067   .text.parseUARTMessage:0000000000000308 $t
+  F:\TEMP\ccIG2vRz.s:1341   .text.parseUARTMessage:000000000000056c $d
+  F:\TEMP\ccIG2vRz.s:1351   .text.parseUARTMessage:0000000000000590 $t
+  F:\TEMP\ccIG2vRz.s:1507   .text.parseUARTMessage:00000000000006a8 $d
+  F:\TEMP\ccIG2vRz.s:1520   .text.RecieveMessage:0000000000000000 $t
+ARM GAS  F:\TEMP\ccIG2vRz.s 			page 36
+
+
+  F:\TEMP\ccIG2vRz.s:1527   .text.RecieveMessage:0000000000000000 RecieveMessage
+  F:\TEMP\ccIG2vRz.s:1574   .text.RecieveMessage:0000000000000054 $d
+  F:\TEMP\ccIG2vRz.s:1581   .text.USART1_IRQHandler:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:1588   .text.USART1_IRQHandler:0000000000000000 USART1_IRQHandler
+  F:\TEMP\ccIG2vRz.s:1609   .text.USART1_IRQHandler:0000000000000020 $d
+  F:\TEMP\ccIG2vRz.s:1613   .text.main:0000000000000000 $t
+  F:\TEMP\ccIG2vRz.s:1620   .text.main:0000000000000000 main
+  F:\TEMP\ccIG2vRz.s:1639   .text.main:0000000000000028 $d
+  F:\TEMP\ccIG2vRz.s:1667   .bss.rec_len:0000000000000000 rec_len
+  F:\TEMP\ccIG2vRz.s:1660   .bss.LastCommand:0000000000000000 LastCommand
+  F:\TEMP\ccIG2vRz.s:1653   .bss.CurrentCommand:0000000000000000 CurrentCommand
+  F:\TEMP\ccIG2vRz.s:1649   .bss.CurrentCommand:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1656   .bss.LastCommand:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1663   .bss.rec_len:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1670   .rodata.DefaultCommand.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1675   .rodata.HelpCommand.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1696   .rodata.ReadCommand.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1706   .rodata.RecieveMessage.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1713   .rodata.SaveCommand.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1717   .rodata.USART1_IRQHandler.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1721   .rodata.WriteCommand.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1728   .rodata.errorType.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1761   .rodata.initDeviceConfig.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1775   .rodata.main.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:1779   .rodata.parseUARTMessage.str1.4:0000000000000000 $d
+  F:\TEMP\ccIG2vRz.s:540    .text.errorType:0000000000000015 $d
+  F:\TEMP\ccIG2vRz.s:540    .text.errorType:0000000000000016 $t
+
+UNDEFINED SYMBOLS
+IO_SetLine
+snprintf
+strlen
+printf
+flash_unlock
+flash_erase_page
+flash_write
+flash_lock
+strtok
+strncmp
+checkHexFormat
+strtol
+checkRange
+checkParity
+_ctype_
+IO_Init
+initUSART1_19200
+initIRQHandler
+initTIM1_msTimer
+initTIM3CH2_externalCounter

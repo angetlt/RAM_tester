@@ -7,7 +7,9 @@
                 "R:/MCU-tools/arm-gcc/arm-none-eabi/include",
                 "R:/MCU-tools/arm-gcc/arm-none-eabi/include/sys/",
                 "R:/MCU-tools/arm-gcc/lib/**",
-                "${workspaceRoot}/**"
+                "${workspaceRoot}/code/include/**",
+                "${workspaceRoot}/CMSIS/include/**",
+                "${workspaceRoot}/freeRTOS/include/**"
             ],
             "defines": [
                 "STM32F103xx",

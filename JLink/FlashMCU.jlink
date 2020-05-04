@@ -1,0 +1,5 @@
+loadbin build\stm32f103-RAM_TESTER.hex, 0x00
+verifybin build\stm32f103-RAM_TESTER.hex, 0x00
+r
+g
+q

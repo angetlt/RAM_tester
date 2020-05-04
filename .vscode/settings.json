@@ -7,8 +7,8 @@
 		"stm32f10x.h": "c",
 		"gpio_stm32f1.h": "c",
 		"stdio.h": "c",
-		"main.h": "c",
-		"driver_flash.h": "c"
+		"task.h": "c",
+		"main.h": "c"
 	},
 	"stm32-for-vscode.makePath": "make",
 	"stm32-for-vscode.armToolchainPath": "",

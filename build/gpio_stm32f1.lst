@@ -1,0 +1,484 @@
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"gpio_stm32f1.c"
+  12              		.text
+  13              		.section	.text.IO_ConfigLine,"ax",%progbits
+  14              		.align	1
+  15              		.global	IO_ConfigLine
+  16              		.arch armv7-m
+  17              		.syntax unified
+  18              		.thumb
+  19              		.thumb_func
+  20              		.fpu softvfp
+  22              	IO_ConfigLine:
+  23              		@ args = 0, pretend = 0, frame = 0
+  24              		@ frame_needed = 0, uses_anonymous_args = 0
+  25              		@ link register save eliminated.
+  26 0000 F0B4     		push	{r4, r5, r6, r7}
+  27 0002 1A4B     		ldr	r3, .L5
+  28 0004 03EBC003 		add	r3, r3, r0, lsl #3
+  29 0008 9C88     		ldrh	r4, [r3, #4]
+  30 000a 072C     		cmp	r4, #7
+  31 000c 1CD8     		bhi	.L2
+  32 000e 174B     		ldr	r3, .L5
+  33 0010 53F83050 		ldr	r5, [r3, r0, lsl #3]
+  34 0014 2E68     		ldr	r6, [r5]
+  35 0016 A300     		lsls	r3, r4, #2
+  36 0018 0F27     		movs	r7, #15
+  37 001a 9F40     		lsls	r7, r7, r3
+  38 001c 26EA0706 		bic	r6, r6, r7
+  39 0020 2E60     		str	r6, [r5]
+  40 0022 2E68     		ldr	r6, [r5]
+  41 0024 9940     		lsls	r1, r1, r3
+  42 0026 3143     		orrs	r1, r1, r6
+  43 0028 2960     		str	r1, [r5]
+  44              	.L3:
+  45 002a 104B     		ldr	r3, .L5
+  46 002c 53F83030 		ldr	r3, [r3, r0, lsl #3]
+  47 0030 D968     		ldr	r1, [r3, #12]
+  48 0032 0120     		movs	r0, #1
+  49 0034 A040     		lsls	r0, r0, r4
+  50 0036 21EA0001 		bic	r1, r1, r0
+  51 003a D960     		str	r1, [r3, #12]
+  52 003c D968     		ldr	r1, [r3, #12]
+  53 003e A240     		lsls	r2, r2, r4
+  54 0040 0A43     		orrs	r2, r2, r1
+  55 0042 DA60     		str	r2, [r3, #12]
+  56 0044 F0BC     		pop	{r4, r5, r6, r7}
+  57 0046 7047     		bx	lr
+  58              	.L2:
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 2
+
+
+  59 0048 084B     		ldr	r3, .L5
+  60 004a 53F83030 		ldr	r3, [r3, r0, lsl #3]
+  61 004e 5E68     		ldr	r6, [r3, #4]
+  62 0050 A4F10805 		sub	r5, r4, #8
+  63 0054 AD00     		lsls	r5, r5, #2
+  64 0056 0F27     		movs	r7, #15
+  65 0058 AF40     		lsls	r7, r7, r5
+  66 005a 26EA0706 		bic	r6, r6, r7
+  67 005e 5E60     		str	r6, [r3, #4]
+  68 0060 5E68     		ldr	r6, [r3, #4]
+  69 0062 A940     		lsls	r1, r1, r5
+  70 0064 3143     		orrs	r1, r1, r6
+  71 0066 5960     		str	r1, [r3, #4]
+  72 0068 DFE7     		b	.L3
+  73              	.L6:
+  74 006a 00BF     		.align	2
+  75              	.L5:
+  76 006c 00000000 		.word	.LANCHOR0
+  78              		.section	.text.IO_Init,"ax",%progbits
+  79              		.align	1
+  80              		.global	IO_Init
+  81              		.syntax unified
+  82              		.thumb
+  83              		.thumb_func
+  84              		.fpu softvfp
+  86              	IO_Init:
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89 0000 38B5     		push	{r3, r4, r5, lr}
+  90 0002 134B     		ldr	r3, .L11
+  91 0004 9A69     		ldr	r2, [r3, #24]
+  92 0006 42F00402 		orr	r2, r2, #4
+  93 000a 9A61     		str	r2, [r3, #24]
+  94 000c 9A69     		ldr	r2, [r3, #24]
+  95 000e 42F00802 		orr	r2, r2, #8
+  96 0012 9A61     		str	r2, [r3, #24]
+  97 0014 9A69     		ldr	r2, [r3, #24]
+  98 0016 42F01002 		orr	r2, r2, #16
+  99 001a 9A61     		str	r2, [r3, #24]
+ 100 001c 9A69     		ldr	r2, [r3, #24]
+ 101 001e 42F02002 		orr	r2, r2, #32
+ 102 0022 9A61     		str	r2, [r3, #24]
+ 103 0024 9A69     		ldr	r2, [r3, #24]
+ 104 0026 42F04002 		orr	r2, r2, #64
+ 105 002a 9A61     		str	r2, [r3, #24]
+ 106 002c 9A69     		ldr	r2, [r3, #24]
+ 107 002e 42F00102 		orr	r2, r2, #1
+ 108 0032 9A61     		str	r2, [r3, #24]
+ 109 0034 0024     		movs	r4, #0
+ 110 0036 074D     		ldr	r5, .L11+4
+ 111              	.L8:
+ 112 0038 05EBC403 		add	r3, r5, r4, lsl #3
+ 113 003c DA79     		ldrb	r2, [r3, #7]	@ zero_extendqisi2
+ 114 003e 9979     		ldrb	r1, [r3, #6]	@ zero_extendqisi2
+ 115 0040 E0B2     		uxtb	r0, r4
+ 116 0042 FFF7FEFF 		bl	IO_ConfigLine
+ 117 0046 0134     		adds	r4, r4, #1
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 3
+
+
+ 118 0048 352C     		cmp	r4, #53
+ 119 004a F5D1     		bne	.L8
+ 120 004c 38BD     		pop	{r3, r4, r5, pc}
+ 121              	.L12:
+ 122 004e 00BF     		.align	2
+ 123              	.L11:
+ 124 0050 00100240 		.word	1073876992
+ 125 0054 00000000 		.word	.LANCHOR0
+ 127              		.section	.text.IO_SetLine,"ax",%progbits
+ 128              		.align	1
+ 129              		.global	IO_SetLine
+ 130              		.syntax unified
+ 131              		.thumb
+ 132              		.thumb_func
+ 133              		.fpu softvfp
+ 135              	IO_SetLine:
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138              		@ link register save eliminated.
+ 139 0000 49B1     		cbz	r1, .L14
+ 140 0002 0A4B     		ldr	r3, .L16
+ 141 0004 53F83020 		ldr	r2, [r3, r0, lsl #3]
+ 142 0008 03EBC000 		add	r0, r3, r0, lsl #3
+ 143 000c 8188     		ldrh	r1, [r0, #4]
+ 144 000e 0123     		movs	r3, #1
+ 145 0010 8B40     		lsls	r3, r3, r1
+ 146 0012 1361     		str	r3, [r2, #16]
+ 147 0014 7047     		bx	lr
+ 148              	.L14:
+ 149 0016 054B     		ldr	r3, .L16
+ 150 0018 53F83020 		ldr	r2, [r3, r0, lsl #3]
+ 151 001c 03EBC000 		add	r0, r3, r0, lsl #3
+ 152 0020 8188     		ldrh	r1, [r0, #4]
+ 153 0022 0123     		movs	r3, #1
+ 154 0024 8B40     		lsls	r3, r3, r1
+ 155 0026 5361     		str	r3, [r2, #20]
+ 156 0028 7047     		bx	lr
+ 157              	.L17:
+ 158 002a 00BF     		.align	2
+ 159              	.L16:
+ 160 002c 00000000 		.word	.LANCHOR0
+ 162              		.section	.text.IO_InvertLine,"ax",%progbits
+ 163              		.align	1
+ 164              		.global	IO_InvertLine
+ 165              		.syntax unified
+ 166              		.thumb
+ 167              		.thumb_func
+ 168              		.fpu softvfp
+ 170              	IO_InvertLine:
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173              		@ link register save eliminated.
+ 174 0000 10B4     		push	{r4}
+ 175 0002 064A     		ldr	r2, .L20
+ 176 0004 52F83010 		ldr	r1, [r2, r0, lsl #3]
+ 177 0008 CC68     		ldr	r4, [r1, #12]
+ 178 000a 02EBC002 		add	r2, r2, r0, lsl #3
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 4
+
+
+ 179 000e 9288     		ldrh	r2, [r2, #4]
+ 180 0010 0123     		movs	r3, #1
+ 181 0012 9340     		lsls	r3, r3, r2
+ 182 0014 6340     		eors	r3, r3, r4
+ 183 0016 CB60     		str	r3, [r1, #12]
+ 184 0018 10BC     		pop	{r4}
+ 185 001a 7047     		bx	lr
+ 186              	.L21:
+ 187              		.align	2
+ 188              	.L20:
+ 189 001c 00000000 		.word	.LANCHOR0
+ 191              		.section	.text.IO_GetLine,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	IO_GetLine
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu softvfp
+ 199              	IO_GetLine:
+ 200              		@ args = 0, pretend = 0, frame = 0
+ 201              		@ frame_needed = 0, uses_anonymous_args = 0
+ 202              		@ link register save eliminated.
+ 203 0000 3428     		cmp	r0, #52
+ 204 0002 0AD8     		bhi	.L24
+ 205 0004 064B     		ldr	r3, .L25
+ 206 0006 53F83020 		ldr	r2, [r3, r0, lsl #3]
+ 207 000a 9268     		ldr	r2, [r2, #8]
+ 208 000c 03EBC000 		add	r0, r3, r0, lsl #3
+ 209 0010 8388     		ldrh	r3, [r0, #4]
+ 210 0012 0120     		movs	r0, #1
+ 211 0014 9840     		lsls	r0, r0, r3
+ 212 0016 1040     		ands	r0, r0, r2
+ 213 0018 7047     		bx	lr
+ 214              	.L24:
+ 215 001a 0020     		movs	r0, #0
+ 216 001c 7047     		bx	lr
+ 217              	.L26:
+ 218 001e 00BF     		.align	2
+ 219              	.L25:
+ 220 0020 00000000 		.word	.LANCHOR0
+ 222              		.global	cIO_COUNT
+ 223              		.global	IOs
+ 224              		.section	.rodata.IOs,"a"
+ 225              		.align	2
+ 226              		.set	.LANCHOR0,. + 0
+ 229              	IOs:
+ 230 0000 00080140 		.word	1073809408
+ 231 0004 0000     		.short	0
+ 232 0006 03       		.byte	3
+ 233 0007 01       		.byte	1
+ 234 0008 00080140 		.word	1073809408
+ 235 000c 0100     		.short	1
+ 236 000e 03       		.byte	3
+ 237 000f 01       		.byte	1
+ 238 0010 00080140 		.word	1073809408
+ 239 0014 0200     		.short	2
+ 240 0016 03       		.byte	3
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 5
+
+
+ 241 0017 01       		.byte	1
+ 242 0018 00080140 		.word	1073809408
+ 243 001c 0300     		.short	3
+ 244 001e 03       		.byte	3
+ 245 001f 01       		.byte	1
+ 246 0020 00080140 		.word	1073809408
+ 247 0024 0400     		.short	4
+ 248 0026 03       		.byte	3
+ 249 0027 01       		.byte	1
+ 250 0028 00080140 		.word	1073809408
+ 251 002c 0500     		.short	5
+ 252 002e 03       		.byte	3
+ 253 002f 01       		.byte	1
+ 254 0030 00080140 		.word	1073809408
+ 255 0034 0600     		.short	6
+ 256 0036 03       		.byte	3
+ 257 0037 01       		.byte	1
+ 258 0038 00080140 		.word	1073809408
+ 259 003c 0700     		.short	7
+ 260 003e 03       		.byte	3
+ 261 003f 01       		.byte	1
+ 262 0040 00140140 		.word	1073812480
+ 263 0044 0F00     		.short	15
+ 264 0046 03       		.byte	3
+ 265 0047 01       		.byte	1
+ 266 0048 00140140 		.word	1073812480
+ 267 004c 0E00     		.short	14
+ 268 004e 03       		.byte	3
+ 269 004f 01       		.byte	1
+ 270 0050 00140140 		.word	1073812480
+ 271 0054 0D00     		.short	13
+ 272 0056 03       		.byte	3
+ 273 0057 01       		.byte	1
+ 274 0058 00140140 		.word	1073812480
+ 275 005c 0C00     		.short	12
+ 276 005e 03       		.byte	3
+ 277 005f 01       		.byte	1
+ 278 0060 00140140 		.word	1073812480
+ 279 0064 0B00     		.short	11
+ 280 0066 03       		.byte	3
+ 281 0067 01       		.byte	1
+ 282 0068 00140140 		.word	1073812480
+ 283 006c 0A00     		.short	10
+ 284 006e 03       		.byte	3
+ 285 006f 01       		.byte	1
+ 286 0070 00140140 		.word	1073812480
+ 287 0074 0900     		.short	9
+ 288 0076 03       		.byte	3
+ 289 0077 01       		.byte	1
+ 290 0078 00140140 		.word	1073812480
+ 291 007c 0800     		.short	8
+ 292 007e 03       		.byte	3
+ 293 007f 01       		.byte	1
+ 294 0080 00140140 		.word	1073812480
+ 295 0084 0700     		.short	7
+ 296 0086 03       		.byte	3
+ 297 0087 01       		.byte	1
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 6
+
+
+ 298 0088 00140140 		.word	1073812480
+ 299 008c 0600     		.short	6
+ 300 008e 03       		.byte	3
+ 301 008f 01       		.byte	1
+ 302 0090 00140140 		.word	1073812480
+ 303 0094 0500     		.short	5
+ 304 0096 03       		.byte	3
+ 305 0097 01       		.byte	1
+ 306 0098 00140140 		.word	1073812480
+ 307 009c 0400     		.short	4
+ 308 009e 03       		.byte	3
+ 309 009f 01       		.byte	1
+ 310 00a0 00140140 		.word	1073812480
+ 311 00a4 0300     		.short	3
+ 312 00a6 03       		.byte	3
+ 313 00a7 01       		.byte	1
+ 314 00a8 00140140 		.word	1073812480
+ 315 00ac 0200     		.short	2
+ 316 00ae 03       		.byte	3
+ 317 00af 01       		.byte	1
+ 318 00b0 00140140 		.word	1073812480
+ 319 00b4 0100     		.short	1
+ 320 00b6 03       		.byte	3
+ 321 00b7 01       		.byte	1
+ 322 00b8 00140140 		.word	1073812480
+ 323 00bc 0000     		.short	0
+ 324 00be 03       		.byte	3
+ 325 00bf 01       		.byte	1
+ 326 00c0 00180140 		.word	1073813504
+ 327 00c4 0F00     		.short	15
+ 328 00c6 00       		.byte	0
+ 329 00c7 01       		.byte	1
+ 330 00c8 00180140 		.word	1073813504
+ 331 00cc 0E00     		.short	14
+ 332 00ce 00       		.byte	0
+ 333 00cf 01       		.byte	1
+ 334 00d0 00180140 		.word	1073813504
+ 335 00d4 0D00     		.short	13
+ 336 00d6 00       		.byte	0
+ 337 00d7 01       		.byte	1
+ 338 00d8 00180140 		.word	1073813504
+ 339 00dc 0C00     		.short	12
+ 340 00de 00       		.byte	0
+ 341 00df 01       		.byte	1
+ 342 00e0 00180140 		.word	1073813504
+ 343 00e4 0B00     		.short	11
+ 344 00e6 00       		.byte	0
+ 345 00e7 01       		.byte	1
+ 346 00e8 00180140 		.word	1073813504
+ 347 00ec 0A00     		.short	10
+ 348 00ee 00       		.byte	0
+ 349 00ef 01       		.byte	1
+ 350 00f0 00180140 		.word	1073813504
+ 351 00f4 0900     		.short	9
+ 352 00f6 00       		.byte	0
+ 353 00f7 01       		.byte	1
+ 354 00f8 00180140 		.word	1073813504
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 7
+
+
+ 355 00fc 0800     		.short	8
+ 356 00fe 00       		.byte	0
+ 357 00ff 01       		.byte	1
+ 358 0100 00180140 		.word	1073813504
+ 359 0104 0700     		.short	7
+ 360 0106 00       		.byte	0
+ 361 0107 01       		.byte	1
+ 362 0108 00180140 		.word	1073813504
+ 363 010c 0600     		.short	6
+ 364 010e 00       		.byte	0
+ 365 010f 01       		.byte	1
+ 366 0110 00180140 		.word	1073813504
+ 367 0114 0500     		.short	5
+ 368 0116 00       		.byte	0
+ 369 0117 01       		.byte	1
+ 370 0118 00180140 		.word	1073813504
+ 371 011c 0400     		.short	4
+ 372 011e 00       		.byte	0
+ 373 011f 01       		.byte	1
+ 374 0120 00180140 		.word	1073813504
+ 375 0124 0300     		.short	3
+ 376 0126 00       		.byte	0
+ 377 0127 01       		.byte	1
+ 378 0128 00180140 		.word	1073813504
+ 379 012c 0200     		.short	2
+ 380 012e 00       		.byte	0
+ 381 012f 01       		.byte	1
+ 382 0130 00180140 		.word	1073813504
+ 383 0134 0100     		.short	1
+ 384 0136 00       		.byte	0
+ 385 0137 01       		.byte	1
+ 386 0138 00180140 		.word	1073813504
+ 387 013c 0000     		.short	0
+ 388 013e 00       		.byte	0
+ 389 013f 01       		.byte	1
+ 390 0140 00080140 		.word	1073809408
+ 391 0144 0800     		.short	8
+ 392 0146 03       		.byte	3
+ 393 0147 01       		.byte	1
+ 394 0148 00080140 		.word	1073809408
+ 395 014c 0B00     		.short	11
+ 396 014e 03       		.byte	3
+ 397 014f 01       		.byte	1
+ 398 0150 00080140 		.word	1073809408
+ 399 0154 0C00     		.short	12
+ 400 0156 03       		.byte	3
+ 401 0157 01       		.byte	1
+ 402 0158 00100140 		.word	1073811456
+ 403 015c 0000     		.short	0
+ 404 015e 03       		.byte	3
+ 405 015f 01       		.byte	1
+ 406 0160 00100140 		.word	1073811456
+ 407 0164 0100     		.short	1
+ 408 0166 03       		.byte	3
+ 409 0167 01       		.byte	1
+ 410 0168 00100140 		.word	1073811456
+ 411 016c 0200     		.short	2
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 8
+
+
+ 412 016e 03       		.byte	3
+ 413 016f 01       		.byte	1
+ 414 0170 00100140 		.word	1073811456
+ 415 0174 0300     		.short	3
+ 416 0176 03       		.byte	3
+ 417 0177 01       		.byte	1
+ 418 0178 00100140 		.word	1073811456
+ 419 017c 0600     		.short	6
+ 420 017e 00       		.byte	0
+ 421 017f 01       		.byte	1
+ 422 0180 00100140 		.word	1073811456
+ 423 0184 0700     		.short	7
+ 424 0186 00       		.byte	0
+ 425 0187 01       		.byte	1
+ 426 0188 00100140 		.word	1073811456
+ 427 018c 0800     		.short	8
+ 428 018e 03       		.byte	3
+ 429 018f 01       		.byte	1
+ 430 0190 00100140 		.word	1073811456
+ 431 0194 0900     		.short	9
+ 432 0196 03       		.byte	3
+ 433 0197 01       		.byte	1
+ 434 0198 00080140 		.word	1073809408
+ 435 019c 0900     		.short	9
+ 436 019e 03       		.byte	3
+ 437 019f 01       		.byte	1
+ 438 01a0 00080140 		.word	1073809408
+ 439 01a4 0A00     		.short	10
+ 440 01a6 03       		.byte	3
+ 441 01a7 01       		.byte	1
+ 442              		.section	.rodata.cIO_COUNT,"a"
+ 443              		.align	2
+ 446              	cIO_COUNT:
+ 447 0000 35000000 		.word	53
+ 448              		.ident	"GCC: (GNU MCU Eclipse ARM Embedded GCC, 64-bit) 8.2.1 20181213 (release) [gcc-8-branch rev
+ARM GAS  F:\TEMP\ccqdQkVx.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 gpio_stm32f1.c
+  F:\TEMP\ccqdQkVx.s:14     .text.IO_ConfigLine:0000000000000000 $t
+  F:\TEMP\ccqdQkVx.s:22     .text.IO_ConfigLine:0000000000000000 IO_ConfigLine
+  F:\TEMP\ccqdQkVx.s:76     .text.IO_ConfigLine:000000000000006c $d
+  F:\TEMP\ccqdQkVx.s:79     .text.IO_Init:0000000000000000 $t
+  F:\TEMP\ccqdQkVx.s:86     .text.IO_Init:0000000000000000 IO_Init
+  F:\TEMP\ccqdQkVx.s:124    .text.IO_Init:0000000000000050 $d
+  F:\TEMP\ccqdQkVx.s:128    .text.IO_SetLine:0000000000000000 $t
+  F:\TEMP\ccqdQkVx.s:135    .text.IO_SetLine:0000000000000000 IO_SetLine
+  F:\TEMP\ccqdQkVx.s:160    .text.IO_SetLine:000000000000002c $d
+  F:\TEMP\ccqdQkVx.s:163    .text.IO_InvertLine:0000000000000000 $t
+  F:\TEMP\ccqdQkVx.s:170    .text.IO_InvertLine:0000000000000000 IO_InvertLine
+  F:\TEMP\ccqdQkVx.s:189    .text.IO_InvertLine:000000000000001c $d
+  F:\TEMP\ccqdQkVx.s:192    .text.IO_GetLine:0000000000000000 $t
+  F:\TEMP\ccqdQkVx.s:199    .text.IO_GetLine:0000000000000000 IO_GetLine
+  F:\TEMP\ccqdQkVx.s:220    .text.IO_GetLine:0000000000000020 $d
+  F:\TEMP\ccqdQkVx.s:446    .rodata.cIO_COUNT:0000000000000000 cIO_COUNT
+  F:\TEMP\ccqdQkVx.s:229    .rodata.IOs:0000000000000000 IOs
+  F:\TEMP\ccqdQkVx.s:225    .rodata.IOs:0000000000000000 $d
+  F:\TEMP\ccqdQkVx.s:443    .rodata.cIO_COUNT:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

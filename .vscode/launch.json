@@ -4,7 +4,7 @@
 		{
 			"name": "Cortex Debug",
 			"cwd": "${workspaceRoot}",
-			"executable": "./build/Firmware.elf",
+			"executable": "./build/stm32f103-RAM_TESTER.elf",
 			"svdFile": "./JLink/STM32F103xx.svd",
 			"request": "launch",
 			"type": "cortex-debug",
