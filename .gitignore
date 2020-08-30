@@ -1,0 +1,28 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.d
+*.lst
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+#*.ld
+
+# Compiled binaries
+*.bin
+#*.elf
+#*.hex
+*.map
+
+# JLink
+*.jflash
+
+# Trash
+*.bak

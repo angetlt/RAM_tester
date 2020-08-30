@@ -12,6 +12,7 @@ uint32_t checkHexFormat(const char *str, uint32_t length)
     }
     return err_count;
 }
+
 uint32_t checkRange(uint32_t iNumber, uint32_t iRange)
 {
     uint32_t err_count = 0;

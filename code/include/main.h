@@ -68,13 +68,12 @@ typedef struct
  * Для работы функции необходимо включить библиотеку 
  * Пример: 
 */
-void ReadCommand(void);
 void DefaultCommand(void);
 void HelpCommand(void);
 void SaveCommand(void);
 
 void WriteCommand(void);
-void ReadCommand(void);
+uint16_t ReadCommand(void);
 
 void parseUARTMessage(char *uart_message);
 void RecieveMessage(char data);

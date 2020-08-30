@@ -2,10 +2,9 @@
  * TODO:
  * - Реализовать проверку на правильность данных при чтении настроек с Flash
  * - Переделать char на uint8_t
- * - Сделать привязку к внешнему тактированию
  * - Цикл реализовать в зависимости от выравнивания по адресу или по данным DeviceConfiguration.AlignMode = 0x0;
  * - Реализовать функцию FD
- * - Реализовать цикл RAM/ROM
+ * - 
 */
 
 /**
@@ -83,27 +82,77 @@ void copyCCtoLC(void)
 
 void taskExecCommand(void)
 {
+	char testRamAddress[UART_RECIEVE_BUFFER];
+	char testWritedData[UART_RECIEVE_BUFFER];
+	char testReadedData[UART_RECIEVE_BUFFER];
+
 	if (CurrentCommand.Command != EMPTY)
 	{
 		if (CurrentCommand.Command == WRITE)
 		{
-			while (CurrentCommand.RepeatNumber != 0)
+
+			uint16_t readedData = 0;
+			SendMessage("<--------------------------------------------------------");
+			for (uint16_t i = 0; i <= CurrentCommand.RepeatNumber; i++)
 			{
 				WriteCommand();
-				CurrentCommand.RepeatNumber--;
+				readedData = ReadCommand();
+				snprintf(testReadedData, UART_RECIEVE_BUFFER, "%X", readedData);
+				SendMessage(testReadedData);
+				SendMessage("<-------write complete---\n\n");
+				SendMessage("<--------------------------------------------------------");
 			}
 		}
 		else if (CurrentCommand.Command == READ)
 		{
-			while (CurrentCommand.RepeatNumber != 0)
+
+			uint16_t readedData = 0;
+			SendMessage("<--------------------------------------------------------");
+			for (uint16_t i = 0; i <= CurrentCommand.RepeatNumber; i++)
 			{
-				ReadCommand();
-				CurrentCommand.RepeatNumber--;
+				readedData = ReadCommand();
+				snprintf(testReadedData, UART_RECIEVE_BUFFER, "%X", readedData);
+				SendMessage(testReadedData);
+				SendMessage("<-------read complete---\n\n");
+				SendMessage("<--------------------------------------------------------");
 			}
 		}
 		else if ((CurrentCommand.Command == RAM) || (CurrentCommand.Command == ROM))
 		{
 			/*Проверка RAM или ROM*/
+			uint16_t testedData = 0;
+			SendMessage("Test RAM address:");
+			for (uint16_t i = 0; i <= CurrentCommand.RepeatNumber; i++)
+			{
+				SendMessage("<--------------------------------------------------------");
+				snprintf(testRamAddress, UART_RECIEVE_BUFFER, "%X", CurrentCommand.Address);
+				snprintf(testWritedData, UART_RECIEVE_BUFFER, "%X", CurrentCommand.Data);
+
+				char rWordAdd[11] = "Address=0x";
+				SendMessage(strcat(rWordAdd, testRamAddress));
+				char rWordData1[11] = "Writed=0x";
+				SendMessage(strcat(rWordData1, testWritedData));
+
+				WriteCommand();
+				testedData = ReadCommand();
+				snprintf(testReadedData, UART_RECIEVE_BUFFER, "%X", testedData);
+				char rWordData2[11] = "Readed=0x";
+				SendMessage(strcat(rWordData2, testReadedData));
+
+				CurrentCommand.Address = CurrentCommand.Address + CurrentCommand.IncrementAddress;
+
+				if (CurrentCommand.Data == testedData)
+				{
+					SendMessage("OK");
+				}
+				else
+				{
+					SendMessage("ERROR!!!");
+				}
+
+				SendMessage("<--------------------------------------------------------\n");
+				delay_ms(150);
+			}
 		}
 		else if (CurrentCommand.Command == FD)
 		{
@@ -111,6 +160,7 @@ void taskExecCommand(void)
 		}
 		copyCCtoLC();
 		resetCC();
+		CurrentCommand.RepeatNumber = 0;
 	}
 	else
 	{
@@ -188,7 +238,6 @@ void HelpCommand(void)
 
 void WriteCommand(void)
 {
-	SendMessage("WRITE Command");
 	//Исходное состояние (T1)
 	IO_SetLine(o_RD, HIGH); //Во время записи должен быть всегда в HIGH
 	IO_SetLine(o_WR, HIGH);
@@ -197,6 +246,12 @@ void WriteCommand(void)
 	DataBusWrite();
 	GPIOD->ODR = CurrentCommand.Address; //адрес
 	GPIOE->ODR = CurrentCommand.Data;	 //данные
+	TIM3->CNT = 0;
+
+	//Ожидание 2 в таймере
+	while (TIM3->CNT != 2)
+	{
+	}
 
 	//Цикл записи (T2, T3, T4)
 	IO_SetLine(o_Address_A16, LOW); //CE = LOW
@@ -205,22 +260,22 @@ void WriteCommand(void)
 	IO_SetLine(o_UDS, LOW);
 	IO_SetLine(o_WR, LOW);
 
-	//Завершение цикла записи, переход в исходное состояние (T4)
+	//Ожидание 7 в таймере
+	while (TIM3->CNT != 7)
+	{
+	}
+
+	//Завершение цикла записи, переход в исходное состояние (T4.2)
 	IO_SetLine(o_WR, HIGH);
 	IO_SetLine(o_Address_A16, HIGH); //CE = LOW
 	IO_SetLine(o_Address_A17, HIGH); //CE = LOW
 	IO_SetLine(o_LDS, HIGH);
 	IO_SetLine(o_UDS, HIGH);
-	SendMessage("<-------write complete---");
-
-	ReadCommand();
 }
 
-void ReadCommand(void)
+uint16_t ReadCommand(void)
 {
-	uint16_t testdata = 0;
-	char rMessage[UART_RECIEVE_BUFFER];
-	SendMessage("READ Command");
+	uint16_t rData = 0;
 
 	//Исходное состояние (T1)
 	IO_SetLine(o_WR, HIGH); //Во время чтения должен быть всегда в HIGH
@@ -231,7 +286,10 @@ void ReadCommand(void)
 	IO_SetLine(o_UDS, HIGH);
 	DataBusRead();
 	GPIOD->ODR = CurrentCommand.Address;
-
+	//Ожидание 2 в таймере
+	while (TIM3->CNT != 2)
+	{
+	}
 	//Цикл чтения (T2, T3, T4)
 	IO_SetLine(o_Address_A16, LOW); //CE = LOW
 	IO_SetLine(o_Address_A17, LOW); //CE = LOW
@@ -239,7 +297,12 @@ void ReadCommand(void)
 	IO_SetLine(o_LDS, LOW);
 	IO_SetLine(o_UDS, LOW);
 
-	testdata = GPIOE->IDR; //чтение данных
+	rData = GPIOE->IDR; //чтение данных
+
+	//Ожидание 7 в таймере
+	while (TIM3->CNT != 7)
+	{
+	}
 
 	//Завершение цикла чтения, переход в исходное состояние (T4)
 	IO_SetLine(o_Address_A16, HIGH); //CE
@@ -248,9 +311,7 @@ void ReadCommand(void)
 	IO_SetLine(o_UDS, HIGH);
 	IO_SetLine(o_RD, HIGH);
 
-	snprintf(rMessage, UART_RECIEVE_BUFFER, "%X", testdata);
-	SendMessage(rMessage);
-	SendMessage("<----read complete---");
+	return rData;
 }
 
 void errorType(uint32_t err_number)
@@ -261,22 +322,22 @@ void errorType(uint32_t err_number)
 		SendMessage(strcat(recieved, " have no errors"));
 		break;
 	case 1:
-		SendMessage("Data out of range");
+		SendMessage("DATA out of range");
 		break;
 	case 2:
-		SendMessage("Address out of range");
+		SendMessage("ADDRESS out of range");
 		break;
 	case 3:
-		SendMessage("Address is not even number");
+		SendMessage("ADDRESS is not even number\nSet DATA size 8 bit\nCommand - SB");
 		break;
 	case 4:
 		SendMessage("ADDRESS or DATA have no hex format");
 		break;
 	case 5:
-		SendMessage("Start Address more than Stop Adress");
+		SendMessage("START ADDRESS more than STOP ADDRESS");
 		break;
 	case 6:
-		SendMessage("Address have no hex format");
+		SendMessage("ADDRESS have no hex format");
 		break;
 	case 7:
 		SendMessage("Unable to loop last command");
@@ -398,7 +459,7 @@ void parseUARTMessage(char *uart_message)
 								CurrentCommand.Start_Address = 0x0;
 								CurrentCommand.Stop_Address = 0x0;
 								CurrentCommand.IncrementAddress = 0x0;
-								CurrentCommand.RepeatNumber = 0x1;
+								CurrentCommand.RepeatNumber = 0x0;
 
 								if (UART_Message.Command == "WRM")
 								{
@@ -462,7 +523,7 @@ void parseUARTMessage(char *uart_message)
 							CurrentCommand.Start_Address = 0x0;
 							CurrentCommand.Stop_Address = 0x0;
 							CurrentCommand.IncrementAddress = 0x0;
-							CurrentCommand.RepeatNumber = 0x1;
+							CurrentCommand.RepeatNumber = 0x0;
 
 							if (UART_Message.Command == "RDM")
 							{
@@ -594,14 +655,6 @@ void parseUARTMessage(char *uart_message)
 						}
 						else
 						{
-							CurrentCommand.Address = 0x0;
-							CurrentCommand.Data = 0x0;
-							CurrentCommand.Start_Address = strtol(UART_Message.Start_Address, 0, 16);
-							CurrentCommand.Stop_Address = strtol(UART_Message.Stop_Address, 0, 16);
-							CurrentCommand.IncrementAddress = 0x0;
-							CurrentCommand.RepeatNumber = 0x0;
-							CurrentCommand.AttributeSpaceAddress = BLANK;
-
 							if (UART_Message.Command == "RAM")
 							{
 								CurrentCommand.Command = RAM;
@@ -609,6 +662,23 @@ void parseUARTMessage(char *uart_message)
 							else
 							{
 								CurrentCommand.Command = ROM;
+							}
+							CurrentCommand.Start_Address = strtol(UART_Message.Start_Address, 0, 16);
+							CurrentCommand.Stop_Address = strtol(UART_Message.Stop_Address, 0, 16);
+							CurrentCommand.Address = CurrentCommand.Start_Address;
+							CurrentCommand.AttributeSpaceAddress = BLANK;
+
+							if (DeviceConfiguration.DataBusSize == 0xFFFF)
+							{
+								CurrentCommand.Data = 0xBDBD;
+								CurrentCommand.IncrementAddress = 0x2;
+								CurrentCommand.RepeatNumber = (CurrentCommand.Stop_Address - CurrentCommand.Start_Address) >> 1;
+							}
+							else
+							{
+								CurrentCommand.Data = 0xBD;
+								CurrentCommand.IncrementAddress = 0x1;
+								CurrentCommand.RepeatNumber = CurrentCommand.Stop_Address - CurrentCommand.Start_Address;
 							}
 
 							err_code = 0;
